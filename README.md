@@ -32,6 +32,11 @@ to `/example` folder.
 const like = 'sample';
 ```
 
+### To update the test data set run 
+```bash
+docker-compose -f "test/docker-compose.yaml" exec db /usr/bin/mysqldump -u root --password=yi5S7LHWONx0qWhd openvisu > test/data/mysql/init.sql
+```
+
 ## Additional information
 
 TODO: Tell users more about the package: where to find more information, how to 
