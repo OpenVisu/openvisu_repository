@@ -30,7 +30,7 @@ jobs:
         run: docker-compose -f "test/docker-compose.yaml" up -d
       - run: docker-compose -f "test/docker-compose.yaml" ps
       - run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openvisu-test_db_1
-      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mysql -uroot -p"yi5S7LHWONx0qWhd" -h db -P 3306 openvisu ' < test/data/mysql/init.sql
+      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mysql -uroot -p"yi5S7LHWONx0qWhd" -h 172.18.0.3 -P 3306 openvisu ' < test/data/mysql/init.sql
       - run: flutter --version
       - run: flutter pub get
       - name: Run tests
