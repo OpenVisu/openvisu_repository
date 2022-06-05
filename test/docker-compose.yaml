@@ -1,4 +1,8 @@
 version: '3'
+networks:
+  testNetwork:
+    driver: custom-driver-1
+    external: true
 
 services:
   frontend:
@@ -8,6 +12,8 @@ services:
     depends_on:
       - backend
       - web_app
+    networks:
+      - testNetwork
 
   web_app:
     image: openvisu/app:${OPENVISU_TAG}
@@ -24,6 +30,8 @@ services:
     depends_on:
       - db
       - influxdb
+    networks:
+      - testNetwork
 
   db:
     image: mariadb:10.6
@@ -33,6 +41,8 @@ services:
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - '3306:3306'
+    networks:
+      - testNetwork
 
   influxdb:
     image: influxdb:2.0
@@ -46,3 +56,5 @@ services:
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
     ports:
       - '8086:8086'
+    networks:
+      - testNetwork

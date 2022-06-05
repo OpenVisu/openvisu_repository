@@ -24,6 +24,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+      - name: Create Docker Network
+        run: docker network create testNetwork
       - name: Start containers
         run: docker-compose -f "test/docker-compose.yaml" up -d
       - run: docker-compose -f "test/docker-compose.yaml" ps
