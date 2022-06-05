@@ -10,7 +10,7 @@ services:
       - web_app
 
   web_app:
-    image: registry.unitedpartners.de/holsten/registry/web_app:${OPENVISU_TAG}
+    image: openvisu/app:${OPENVISU_TAG}
 
   backend:
     image: openvisu/backend:dev
