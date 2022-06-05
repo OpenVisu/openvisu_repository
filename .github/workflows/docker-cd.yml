@@ -25,8 +25,8 @@ jobs:
         with:
           channel: "stable"
       - name: Start containers
-        run: docker-compose -f "test/docker-compose.yml" up -d
-      - run: docker-compose -f "test/docker-compose.yml" ps
+        run: docker-compose -f "test/docker-compose.yaml" up -d
+      - run: docker-compose -f "test/docker-compose.yaml" ps
       - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mysql -uroot -p"yi5S7LHWONx0qWhd" openvisu ' < test/data/mysql/init.sql
       - run: flutter --version
       - run: flutter pub get
