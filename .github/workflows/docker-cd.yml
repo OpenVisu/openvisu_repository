@@ -24,8 +24,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-      - run: sudo apt update
-      - run: sudo apt install mariadb-client mariadb-client-10.3 -f -y
       - name: Create Docker Network
         run: docker network create testNetwork
       - name: Start containers
@@ -33,8 +31,7 @@ jobs:
       - run: docker-compose -f "test/docker-compose.yaml" ps
       - run: docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
       - run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openvisu-test_db_1
-      - run: mariadb -v -uroot -p"yi5S7LHWONx0qWhd" -h 172.18.0.3 -P 3306 openvisu < test/data/mysql/init.sql
-      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mysql -uroot -p"yi5S7LHWONx0qWhd" -h db -P 3306 openvisu ' < test/data/mysql/init.sql
+      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -uroot -p"yi5S7LHWONx0qWhd" -h db -P 3306 openvisu ' < test/data/mysql/init.sql
       - run: flutter --version
       - run: flutter pub get
       - name: Run tests
