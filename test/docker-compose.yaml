@@ -11,8 +11,6 @@ services:
 
   web_app:
     image: openvisu/app:${OPENVISU_TAG}
-    networks:
-      - testNetwork
 
   backend:
     image: openvisu/backend:dev
