@@ -31,7 +31,7 @@ jobs:
       - run: docker-compose -f "test/docker-compose.yaml" ps
       - run: docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
       - run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openvisu-test_db_1
-      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -v -uroot -p"yi5S7LHWONx0qWhd" openvisu ' < test/data/mysql/init.sql
+      - run: docker-compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -u root --password=yi5S7LHWONx0qWhd openvisu ' < test/data/mysql/init.sql
       - run: flutter --version
       - run: flutter pub get
       - name: Run tests
