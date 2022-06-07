@@ -24,8 +24,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-      - run: apt update
-      - run: apt install mariadb-client -y
+      - run: sudo apt update
+      - run: sudo apt install mariadb-client -y
       - name: Create Docker Network
         run: docker network create testNetwork
       - name: Start containers
