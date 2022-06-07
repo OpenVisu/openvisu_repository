@@ -24,6 +24,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+      - run: cat /etc/hosts.allow
+      - run: sudo echo 'mysqld: ALL' >> /etc/hosts.allow
       - run: sudo apt update
       - run: sudo apt install mariadb-client mariadb-client-10.3 -f -y
       - name: Create Docker Network
