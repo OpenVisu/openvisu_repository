@@ -17,7 +17,7 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('AuthenticationRepository', () {
+  group('DashboardRepository', () {
     late AuthenticationRepository authenticationRepository;
     late CredentialsRepository credentialsRepository;
     late DashboardRepository dashboardRepository;
