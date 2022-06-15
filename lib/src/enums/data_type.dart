@@ -130,7 +130,7 @@ enum DataType {
       case Int16:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid Int';
+          return 'Invalid Int16';
         } else if (v > pow(2, 15) - 1) {
           return 'Too big for Int16';
         } else if (v < -pow(2, 15)) {
@@ -140,7 +140,7 @@ enum DataType {
       case Int32:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid Int';
+          return 'Invalid Int32';
         } else if (v > pow(2, 31) - 1) {
           return 'Too big for Int32';
         } else if (v < -pow(2, 31)) {
@@ -150,17 +150,15 @@ enum DataType {
       case Int64:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid Int';
-        } else if (v > pow(2, 63) - 1) {
-          return 'Too big for Int64';
-        } else if (v < -pow(2, 63)) {
-          return 'Too small for Int64';
+          return 'Invalid Int64';
         }
+        // NOTE: cant give more detailed feedback as bigger / smaller numbers
+        // can not be handled
         break;
       case UInt16:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid UInt';
+          return 'Invalid UInt16';
         } else if (v < 0) {
           return 'Too small for UInt16';
         } else if (v > pow(2, 16) - 1) {
@@ -170,7 +168,7 @@ enum DataType {
       case UInt32:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid UInt';
+          return 'Invalid UInt32';
         } else if (v < 0) {
           return 'Too small for UInt32';
         } else if (v > pow(2, 32) - 1) {
@@ -180,7 +178,7 @@ enum DataType {
       case UInt64:
         dc.int? v = dc.int.tryParse(value);
         if (v == null) {
-          return 'Invalid UInt';
+          return 'Invalid UInt64';
         } else if (v < 0) {
           return 'Too small for UInt64';
         } else if (v > pow(2, 64) - 1) {

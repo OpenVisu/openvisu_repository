@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import 'dart:math';
+
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -92,11 +94,13 @@ void main() {
   });
 
   test('Test validate method', () {
+    // Boolean
     expect(DataType.Boolean.validate('-1'), 'Invalid Boolean');
     expect(DataType.Boolean.validate('2'), 'Invalid Boolean');
     expect(DataType.Boolean.validate('0'), null);
     expect(DataType.Boolean.validate('1'), null);
 
+    // Float
     expect(DataType.Float.validate('test'), 'Invalid Float');
     expect(DataType.Float.validate('true'), 'Invalid Float');
     expect(DataType.Float.validate('${3.4028236e+38}'), 'Too big for Float');
@@ -104,6 +108,57 @@ void main() {
     expect(DataType.Float.validate('1'), null);
     expect(DataType.Float.validate('1.0'), null);
 
+    // Double
+    expect(DataType.Double.validate('test'), 'Invalid Double');
+    expect(DataType.Double.validate('true'), 'Invalid Double');
+    expect(
+      DataType.Double.validate('${double.maxFinite}0'),
+      'Too big for Double',
+    );
+    expect(DataType.Double.validate('0'), null);
+    expect(DataType.Double.validate('1'), null);
+    expect(DataType.Double.validate('1.0'), null);
+
+    // Int16
+    expect(DataType.Int16.validate('test'), 'Invalid Int16');
+    expect(DataType.Int16.validate('true'), 'Invalid Int16');
+    expect(
+      DataType.Int16.validate(pow(2, 15).toString()),
+      'Too big for Int16',
+    );
+    expect(
+      DataType.Int16.validate((-pow(2, 15) - 1).toString()),
+      'Too small for Int16',
+    );
+    expect(DataType.Int16.validate('0'), null);
+    expect(DataType.Int16.validate('1'), null);
+    expect(DataType.Int16.validate('-1'), null);
+
+    // Int32
+    expect(DataType.Int32.validate('test'), 'Invalid Int32');
+    expect(DataType.Int32.validate('true'), 'Invalid Int32');
+    expect(
+      DataType.Int32.validate(pow(2, 31).toString()),
+      'Too big for Int32',
+    );
+    expect(
+      DataType.Int32.validate((-pow(2, 31) - 1).toString()),
+      'Too small for Int32',
+    );
+    expect(DataType.Int32.validate('0'), null);
+    expect(DataType.Int32.validate('1'), null);
+    expect(DataType.Int32.validate('-1'), null);
+
+    // Int64
+    expect(DataType.Int64.validate('test'), 'Invalid Int64');
+    expect(DataType.Int64.validate('true'), 'Invalid Int64');
+    expect(DataType.Int64.validate('${pow(2, 63)}0'), 'Invalid Int64');
+    expect(DataType.Int64.validate('-${pow(2, 63)}0'), 'Invalid Int64');
+    expect(DataType.Int64.validate('0'), null);
+    expect(DataType.Int64.validate('1'), null);
+    expect(DataType.Int64.validate('-1'), null);
+
+    // unsuppoerted datatypes
     for (final DataType dt in DataType.values) {
       if (!dt.isTrackable()) {
         expect(
