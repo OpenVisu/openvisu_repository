@@ -215,11 +215,13 @@ void main() {
   });
 
   test('Test cast method', () {
-    expect(DataType.Boolean.cast('-1'), false);
-    expect(DataType.Boolean.cast('2'), false);
+    // Boolean
+    expect(() => DataType.Boolean.cast('-1'), throwsA(isA<FormatException>()));
+    expect(() => DataType.Boolean.cast('2'), throwsA(isA<FormatException>()));
     expect(DataType.Boolean.cast('0'), false);
     expect(DataType.Boolean.cast('1'), true);
 
+    // Float
     expect(() => DataType.Float.cast('test'), throwsA(isA<FormatException>()));
     expect(() => DataType.Float.cast('true'), throwsA(isA<FormatException>()));
     expect(
@@ -229,6 +231,43 @@ void main() {
     expect(DataType.Float.cast('0'), 0);
     expect(DataType.Float.cast('1'), 1);
     expect(DataType.Float.cast('1.0'), 1);
+
+    // Double
+    expect(DataType.Double.cast('0'), 0);
+    expect(DataType.Double.cast('1'), 1);
+    expect(DataType.Double.cast('1.1'), 1.1);
+
+    // Int16
+    expect(DataType.Int16.cast('0'), 0);
+    expect(DataType.Int16.cast('-1'), -1);
+    expect(DataType.Int16.cast('1'), 1);
+
+    // Int32
+    expect(DataType.Int32.cast('0'), 0);
+    expect(DataType.Int32.cast('-1'), -1);
+    expect(DataType.Int32.cast('1'), 1);
+
+    // Int64
+    expect(DataType.Int64.cast('0'), 0);
+    expect(DataType.Int64.cast('-1'), -1);
+    expect(DataType.Int64.cast('1'), 1);
+
+    // UInt16
+    expect(DataType.UInt16.cast('0'), 0);
+    expect(DataType.UInt16.cast('1'), 1);
+
+    // UInt32
+    expect(DataType.UInt32.cast('0'), 0);
+    expect(DataType.UInt32.cast('1'), 1);
+
+    // UInt64
+    expect(DataType.UInt64.cast('0'), 0);
+    expect(DataType.UInt64.cast('1'), 1);
+
+    // String
+    expect(DataType.String.cast('0'), '0');
+    expect(DataType.String.cast('1'), '1');
+    expect(DataType.String.cast('test'), 'test');
 
     for (final DataType dt in DataType.values) {
       if (!dt.isTrackable()) {

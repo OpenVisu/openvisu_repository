@@ -216,6 +216,11 @@ enum DataType {
     if (value == null) {
       return null;
     }
+    dc.String? error = validate(value);
+    if (error != null) {
+      throw dc.FormatException(error);
+    }
+
     switch (this) {
       case Boolean:
         return (dc.int.parse(value) == 1);
@@ -240,9 +245,6 @@ enum DataType {
       case UInt64:
         return dc.int.parse(value).toUnsigned(64);
       case String:
-        if (value.length > 255) {
-          throw const dc.FormatException('String max length is 255');
-        }
         return value;
       case DataType.none:
       case DataType.Byte:
