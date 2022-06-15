@@ -62,5 +62,25 @@ void main() {
       expect(dashboard1.name, 'Dashboard 1');
       expect(dashboard1.id, id1);
     });
+
+    test('test dashboardRepository.add().', () async {
+      final Dashboard newDashboard = Dashboard.createDefault().copyWith(
+        name: 'Dashboard 2',
+      );
+      final Dashboard createdDashboard =
+          await dashboardRepository.add(newDashboard);
+      expect(createdDashboard.name, 'Dashboard 2');
+    });
+
+    test('test dashboardRepository.delete().', () async {
+      List<Dashboard> list = await dashboardRepository.all(null);
+      expect(list.length, 2);
+      expect(list.first.id == id1, true);
+      expect(list.last.id != id1, true);
+      await dashboardRepository.delete(list.last.id);
+      list = await dashboardRepository.all(null);
+      expect(list.length, 1);
+      expect(list.first.id == id1, true);
+    });
   });
 }

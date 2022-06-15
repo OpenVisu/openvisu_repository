@@ -66,8 +66,7 @@ class Dashboard extends Model<Dashboard> {
         'sort': sort,
       };
 
-  Dashboard copyWith({final String? name, final String? description}) =>
-      Dashboard(
+  Dashboard copyWith({final String? name}) => Dashboard(
         id,
         createdBy,
         updatedBy,
