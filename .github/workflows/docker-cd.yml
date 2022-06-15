@@ -28,7 +28,6 @@ jobs:
         run: docker compose -f "test/docker-compose.yaml" up -d
       - run: docker compose -f "test/docker-compose.yaml" ps
       - run: docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
-      - run: docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openvisu-test_db_1
         # perform some tasks to give sql server time to start
       - run: flutter --version
       - run: flutter pub get
