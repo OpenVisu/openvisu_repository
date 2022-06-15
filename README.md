@@ -11,6 +11,9 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
+[![codecov](https://codecov.io/gh/OpenVisu/openvisu_repository/branch/main/graph/badge.svg?token=VFNFVKSEE3)](https://codecov.io/gh/OpenVisu/openvisu_repository)
+
+
 A Dart Package wich provides the models and repositories used by OpenVisu.
 This Package is not yet stable and things might change without prior notice!
 
