@@ -23,4 +23,15 @@ void main() {
       expect(original, recreated);
     }
   });
+
+  test('Test isLive method', () {
+    for (final ChartType ct in ChartType.values) {
+      final bool r = ct.isLive();
+      if (ct == ChartType.barLive || ct == ChartType.pie) {
+        expect(r, true);
+      } else {
+        expect(r, false);
+      }
+    }
+  });
 }

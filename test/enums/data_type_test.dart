@@ -23,4 +23,68 @@ void main() {
       expect(original, recreated);
     }
   });
+
+  test('Test isNumeric method', () {
+    for (final DataType dt in DataType.values) {
+      final bool r = dt.isNumeric();
+      switch (dt) {
+        case DataType.Boolean:
+        case DataType.Float:
+        case DataType.Double:
+        case DataType.Int16:
+        case DataType.Int32:
+        case DataType.Int64:
+        case DataType.UInt16:
+        case DataType.UInt32:
+        case DataType.UInt64:
+          expect(r, true);
+          break;
+        default:
+          expect(r, false);
+      }
+    }
+  });
+
+  test('Test isTrackable method', () {
+    for (final DataType dt in DataType.values) {
+      final bool r = dt.isTrackable();
+      switch (dt) {
+        case DataType.Boolean:
+        case DataType.Float:
+        case DataType.Double:
+        case DataType.String:
+        case DataType.Int16:
+        case DataType.Int32:
+        case DataType.Int64:
+        case DataType.UInt16:
+        case DataType.UInt32:
+        case DataType.UInt64:
+          expect(r, true);
+          break;
+        default:
+          expect(r, false);
+      }
+    }
+  });
+  test('Test isEditable method', () {
+    for (final DataType dt in DataType.values) {
+      final bool r = dt.isEditable();
+      switch (dt) {
+        case DataType.Boolean:
+        case DataType.Float:
+        case DataType.Double:
+        case DataType.String:
+        case DataType.Int16:
+        case DataType.Int32:
+        case DataType.Int64:
+        case DataType.UInt16:
+        case DataType.UInt32:
+        case DataType.UInt64:
+          expect(r, true);
+          break;
+        default:
+          expect(r, false);
+      }
+    }
+  });
 }
