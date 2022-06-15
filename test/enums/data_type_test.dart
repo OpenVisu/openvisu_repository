@@ -22,6 +22,8 @@ void main() {
       DataType recreated = DataType.fromString(original.toString());
       expect(original, recreated);
     }
+
+    expect(DataType.fromString('not existing'), DataType.none);
   });
 
   test('Test isNumeric method', () {
@@ -66,6 +68,7 @@ void main() {
       }
     }
   });
+
   test('Test isEditable method', () {
     for (final DataType dt in DataType.values) {
       final bool r = dt.isEditable();
@@ -84,6 +87,61 @@ void main() {
           break;
         default:
           expect(r, false);
+      }
+    }
+  });
+
+  test('Test validate method', () {
+    expect(DataType.Boolean.validate('-1'), 'Invalid Boolean');
+    expect(DataType.Boolean.validate('2'), 'Invalid Boolean');
+    expect(DataType.Boolean.validate('0'), null);
+    expect(DataType.Boolean.validate('1'), null);
+
+    expect(DataType.Float.validate('test'), 'Invalid Float');
+    expect(DataType.Float.validate('true'), 'Invalid Float');
+    expect(DataType.Float.validate('${3.4028236e+38}'), 'Too big for Float');
+    expect(DataType.Float.validate('0'), null);
+    expect(DataType.Float.validate('1'), null);
+    expect(DataType.Float.validate('1.0'), null);
+
+    for (final DataType dt in DataType.values) {
+      if (!dt.isTrackable()) {
+        expect(
+          dt.validate(''),
+          (String v) => v.startsWith('Unsupported DataType:'),
+        );
+      }
+    }
+  });
+
+  test('Test cast method', () {
+    expect(DataType.Boolean.cast('-1'), false);
+    expect(DataType.Boolean.cast('2'), false);
+    expect(DataType.Boolean.cast('0'), false);
+    expect(DataType.Boolean.cast('1'), true);
+
+    expect(() => DataType.Float.cast('test'), throwsA(isA<FormatException>()));
+    expect(() => DataType.Float.cast('true'), throwsA(isA<FormatException>()));
+    expect(
+      () => DataType.Float.cast('${3.4028236e+38}'),
+      throwsA(isA<FormatException>()),
+    );
+    expect(DataType.Float.cast('0'), 0);
+    expect(DataType.Float.cast('1'), 1);
+    expect(DataType.Float.cast('1.0'), 1);
+
+    for (final DataType dt in DataType.values) {
+      if (!dt.isTrackable()) {
+        expect(
+          () => dt.cast(''),
+          throwsA(
+            predicate(
+              (x) =>
+                  x is FormatException &&
+                  x.message.startsWith('Unsupported DataType: '),
+            ),
+          ),
+        );
       }
     }
   });
