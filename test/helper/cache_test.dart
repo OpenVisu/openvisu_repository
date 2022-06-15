@@ -31,12 +31,18 @@ void main() {
     final Dashboard dashboard2 =
         Dashboard(id2, Pk<User>(0), Pk<User>(0), 0, 0, 'Dashboard 2', 0);
 
+    const String query1 = 'query1';
+    const String query2 = 'query2';
+    final List<Dashboard> list1 = [dashboard1];
+    final List<Dashboard> list2 = [dashboard2];
+
     setUp(() async {});
 
     test('test setItemCache()', () async {
       expect(testCache.getItemCache(id1), null);
       testCache.setItemCache(dashboard1);
       expect(testCache.getItemCache(id1), dashboard1);
+      expect(testCache.getItemCache(id2), null);
     });
 
     test('test removeItemCache()', () async {
@@ -53,6 +59,39 @@ void main() {
       testCache.itemCacheClear();
       expect(testCache.getItemCache(id1), null);
       expect(testCache.getItemCache(id2), null);
+    });
+
+    test('test setListCache()', () async {
+      expect(testCache.getListCache(query1), null);
+      testCache.setListCache(query1, list1);
+      expect(testCache.getListCache(query1), list1);
+      expect(testCache.getListCache(query2), null);
+    });
+
+    test('test removeListCache()', () async {
+      expect(testCache.getListCache(query1), list1);
+      testCache.removeListCache(query1);
+      expect(testCache.getListCache(query1), null);
+    });
+
+    test('test listCacheClear()', () async {
+      testCache.setListCache(query1, list1);
+      testCache.setListCache(query2, list2);
+      expect(testCache.getListCache(query1), list1);
+      expect(testCache.getListCache(query2), list2);
+      testCache.listCacheClear();
+      expect(testCache.getListCache(query1), null);
+      expect(testCache.getListCache(query2), null);
+    });
+
+    test('test cacheClear()', () async {
+      testCache.setItemCache(dashboard1);
+      testCache.setListCache(query1, list1);
+      expect(testCache.getItemCache(id1), dashboard1);
+      expect(testCache.getListCache(query1), list1);
+      testCache.cacheClear();
+      expect(testCache.getItemCache(id1), null);
+      expect(testCache.getListCache(query1), null);
     });
   });
 }
