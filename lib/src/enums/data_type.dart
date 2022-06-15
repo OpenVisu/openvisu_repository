@@ -181,10 +181,9 @@ enum DataType {
           return 'Invalid UInt64';
         } else if (v < 0) {
           return 'Too small for UInt64';
-        } else if (v > pow(2, 64) - 1) {
-          // TODO use https://pub.dev/packages/fixnum/install
-          return 'Too big for UInt64';
         }
+        // NOTE: cant give more detailed feedback as bigger
+        // numbers can not be handled
         break;
       case String:
         if (value.length > 255) {

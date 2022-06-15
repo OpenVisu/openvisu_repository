@@ -158,6 +158,51 @@ void main() {
     expect(DataType.Int64.validate('1'), null);
     expect(DataType.Int64.validate('-1'), null);
 
+    // UInt16
+    expect(DataType.UInt16.validate('test'), 'Invalid UInt16');
+    expect(DataType.UInt16.validate('true'), 'Invalid UInt16');
+    expect(
+      DataType.UInt16.validate(pow(2, 16).toString()),
+      'Too big for UInt16',
+    );
+    expect(
+      DataType.UInt16.validate('-1'),
+      'Too small for UInt16',
+    );
+    expect(DataType.UInt16.validate('0'), null);
+    expect(DataType.UInt16.validate('1'), null);
+
+    // UInt32
+    expect(DataType.UInt32.validate('test'), 'Invalid UInt32');
+    expect(DataType.UInt32.validate('true'), 'Invalid UInt32');
+    expect(
+      DataType.UInt32.validate(pow(2, 32).toString()),
+      'Too big for UInt32',
+    );
+    expect(
+      DataType.UInt32.validate('-1'),
+      'Too small for UInt32',
+    );
+    expect(DataType.UInt32.validate('0'), null);
+    expect(DataType.UInt32.validate('1'), null);
+
+    // UInt64
+    expect(DataType.UInt64.validate('test'), 'Invalid UInt64');
+    expect(DataType.UInt64.validate('true'), 'Invalid UInt64');
+    expect(
+      DataType.UInt64.validate('-1'),
+      'Too small for UInt64',
+    );
+    expect(DataType.UInt64.validate('0'), null);
+    expect(DataType.UInt64.validate('1'), null);
+
+    // String
+    expect(DataType.String.validate('test string'), null);
+    expect(
+      DataType.String.validate(List.generate(256, (_) => '-').join()),
+      'String max length is 255',
+    );
+
     // unsuppoerted datatypes
     for (final DataType dt in DataType.values) {
       if (!dt.isTrackable()) {
