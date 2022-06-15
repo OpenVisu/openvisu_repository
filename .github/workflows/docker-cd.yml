@@ -34,3 +34,6 @@ jobs:
       - run: docker compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -u root --password=yi5S7LHWONx0qWhd openvisu ' < test/data/mysql/init.sql
       - name: Run tests
         run: flutter test --coverage
+      - name: Upload coverage to codecov
+        run: curl -s https://codecov.io/bash
+        shell: bash
