@@ -2,6 +2,7 @@ name: openvisu_repository
 description: A Dart Package wich provides the OpenVisu models and repositories.
 version: 0.0.1
 homepage: https://github.com/OpenVisu/openvisu_repository
+publish_to: none
 
 environment:
   sdk: ">=2.17.1 <3.0.0"

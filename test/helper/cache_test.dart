@@ -13,8 +13,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import 'dart:math';
-
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openvisu_repository/src/helper/cache.dart';
