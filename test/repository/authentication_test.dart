@@ -21,7 +21,7 @@ void main() {
     late AuthenticationRepository authenticationRepository;
     late CredentialsRepository credentialsRepository;
 
-    const Credentials credentials = Credentials(
+    const Credentials credentialsAdmin = Credentials(
       username: 'admin',
       password: 'password',
       endpoint: 'http://localhost/',
@@ -39,7 +39,7 @@ void main() {
       expect(authenticationRepository.hasOpenSession(), false);
 
       await authenticationRepository.authenticate(
-        credentials: credentials,
+        credentials: credentialsAdmin,
         saveLogin: false,
       );
 
@@ -52,6 +52,51 @@ void main() {
       await authenticationRepository.doLogout();
 
       expect(authenticationRepository.hasOpenSession(), false);
+    });
+
+    test('test authentication.isAdmin().', () async {
+      await authenticationRepository.authenticate(
+        credentials: credentialsAdmin,
+        saveLogin: false,
+      );
+
+      expect(authenticationRepository.isAdmin(), true);
+    });
+
+    test('test authentication.isAdmin().', () async {
+      await authenticationRepository.authenticate(
+        credentials: credentialsAdmin,
+        saveLogin: false,
+      );
+
+      expect(
+        authenticationRepository.can(
+          action: ActionType.create,
+          subject: 'test',
+        ),
+        true,
+      );
+    });
+
+    test('test authentication.getMe().', () async {
+      await authenticationRepository.authenticate(
+        credentials: credentialsAdmin,
+        saveLogin: false,
+      );
+
+      final Me me = authenticationRepository.getMe();
+      expect(me.email, 'admin@example.com');
+    });
+
+    test('test authentication.getRoles().', () async {
+      await authenticationRepository.authenticate(
+        credentials: credentialsAdmin,
+        saveLogin: false,
+      );
+
+      final List<String> roles = authenticationRepository.getRoles();
+      expect(roles.length, 1);
+      expect(roles.first, 'administrator');
     });
   });
 }
