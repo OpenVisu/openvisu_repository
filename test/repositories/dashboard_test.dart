@@ -50,14 +50,14 @@ void main() {
       await authenticationRepository.doLogout();
     });
 
-    test('test authentication.authenticate().', () async {
+    test('test dashboardRepository.all().', () async {
       final List<Dashboard> list = await dashboardRepository.all(null);
       expect(list.length, 1);
       expect(list.first.name, 'Dashboard 1');
       expect(list.first.id, id1);
     });
 
-    test('test authentication.authenticate().', () async {
+    test('test dashboardRepository.get().', () async {
       final Dashboard dashboard1 = await dashboardRepository.get(id1);
       expect(dashboard1.name, 'Dashboard 1');
       expect(dashboard1.id, id1);
