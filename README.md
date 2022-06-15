@@ -26,8 +26,10 @@ This Package is not yet stable and things might change without prior notice!
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Import package:
+```dart
+import 'package:openvisu_repository/openvisu_repository.dart';
+```
 
 ## Usage
 
@@ -35,7 +37,8 @@ TODO: Include short and useful examples for package users. Add longer examples
 to `/example` folder. 
 
 ```dart
-const like = 'sample';
+import 'package:openvisu_repository/openvisu_repository.dart';
+
 ```
 
 ## Run tests
