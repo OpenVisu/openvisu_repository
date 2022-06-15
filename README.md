@@ -11,12 +11,15 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Dart Package wich provides the models and repositories used by OpenVisu.
+This Package is not yet stable and things might change without prior notice!
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- contains all models that are used in the backend
+- contains repositories to access the backend
+- handles authentication
+- does not contain some models that are only relevant for the frontend
 
 ## Getting started
 
@@ -32,9 +35,23 @@ to `/example` folder.
 const like = 'sample';
 ```
 
+## Run tests
+
+Start the test environment and import test data:
+```bash
+docker compose -f "test/docker-compose.yaml" up -d
+docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
+docker compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -u root --password=yi5S7LHWONx0qWhd openvisu ' < test/data/mysql/init.sql
+```
+
+Run the tests:
+```bash
+flutter test
+```
+
 ### To update the test data set run 
 ```bash
-docker-compose -f "test/docker-compose.yaml" exec db /usr/bin/mysqldump -u root --password=yi5S7LHWONx0qWhd openvisu > test/data/mysql/init.sql
+docker compose -f "test/docker-compose.yaml" exec db /usr/bin/mysqldump -u root --password=yi5S7LHWONx0qWhd openvisu > test/data/mysql/init.sql
 ```
 
 ## Additional information
