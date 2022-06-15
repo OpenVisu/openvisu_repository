@@ -269,6 +269,7 @@ void main() {
     expect(DataType.String.cast('1'), '1');
     expect(DataType.String.cast('test'), 'test');
 
+    // unsuppoerted datatypes
     for (final DataType dt in DataType.values) {
       if (!dt.isTrackable()) {
         expect(
