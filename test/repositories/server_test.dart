@@ -57,6 +57,7 @@ void main() {
         name: 'test server',
         description: 'test description',
         url: 'opc.tcp://opcua-fake:4842/',
+        rootNode: 'ns=2;i=1',
       );
       server = await serverRepository.add(server);
       expect(server.name, 'test server');
