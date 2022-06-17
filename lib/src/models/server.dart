@@ -72,7 +72,7 @@ class Server extends Model<Server> {
       : name = data['name'],
         url = data['url'],
         description = data['description'],
-        checkedOn = data['checked_at'],
+        checkedOn = data['checked_at'] ?? 0, // TODO set 0 as default in db
         scanRequired = data['scan_required'] == 1,
         modifiedOn = data['updated_at'],
         hasConnectionError = data['has_connection_error'] == 1,
