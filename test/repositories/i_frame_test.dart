@@ -17,7 +17,7 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('ServerRepository', () {
+  group('IFrameRepository', () {
     final CredentialsRepository credentialsRepository = CredentialsRepository();
     final AuthenticationRepository authenticationRepository =
         AuthenticationRepository(
@@ -58,11 +58,11 @@ void main() {
         url: 'http://example.com/',
       );
       iframe = await repository.add(iframe);
+      id = iframe.id;
       expect(iframe.name, 'Test IFrame');
       expect(iframe.url, 'http://example.com/');
       final List<IFrame> list = await repository.all(null);
       expect(list.length, 1);
-      id = list.first.id;
     });
 
     test('test update()', () async {
