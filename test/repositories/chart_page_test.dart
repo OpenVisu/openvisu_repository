@@ -51,7 +51,7 @@ void main() {
 
     test('test all()', () async {
       final List<ChartPage> list = await repository.all(null);
-      expect(list.length, 1);
+      expect(list.length, 0);
     });
 
     late Pk<Page> id;
@@ -70,7 +70,7 @@ void main() {
       expect(page.childId, isNotNull);
 
       final List<ChartPage> list = await repository.all(null);
-      expect(list.length, 2);
+      expect(list.length, 1);
 
       final ChartPage chartPage = await repository.get(
         page.childId as Pk<ChartPage>,
@@ -93,12 +93,12 @@ void main() {
       List<Page> pageList = await pageRepository.all(null);
       List<ChartPage> chartPageList = await repository.all(null);
       expect(pageList.length, 2);
-      expect(chartPageList.length, 2);
+      expect(chartPageList.length, 1);
       await pageRepository.delete(id);
       pageList = await pageRepository.all(null);
       chartPageList = await repository.all(null);
       expect(pageList.length, 1);
-      expect(chartPageList.length, 1);
+      expect(chartPageList.length, 0);
     });
   });
 }

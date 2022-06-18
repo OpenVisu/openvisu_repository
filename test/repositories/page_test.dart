@@ -48,11 +48,12 @@ void main() {
 
     test('test all()', () async {
       final List<Page> list = await repository.all(null);
-      expect(list.length, 1);
+      expect(list.isNotEmpty, true);
     });
 
     late Pk<Page> id;
     test('test create()', () async {
+      final int length = (await repository.all(null)).length;
       Page page = Page.createDefault().copyWith(
         name: 'Test Page',
         dashboardId: Pk<Dashboard>(1),
@@ -63,10 +64,8 @@ void main() {
       expect(page.name, 'Test Page');
       expect(page.dashboardId, Pk<Dashboard>(1));
       expect(page.pageType, PageType.chart);
-      final List<Page> list = await repository.all(null);
-      expect(list.length, 2);
-
-      // TODO test if chartPage exists
+      final int newLength = (await repository.all(null)).length;
+      expect(newLength, length + 1);
     });
 
     test('test update()', () async {
@@ -79,11 +78,10 @@ void main() {
     });
 
     test('test delete()', () async {
-      List<Page> list = await repository.all(null);
-      expect(list.length, 2);
+      final int length = (await repository.all(null)).length;
       await repository.delete(id);
-      list = await repository.all(null);
-      expect(list.length, 1);
+      final int newLength = (await repository.all(null)).length;
+      expect(newLength, length - 1);
     });
   });
 }
