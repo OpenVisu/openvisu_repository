@@ -109,12 +109,8 @@ void main() {
     test('test if timeSerial models are promoted to timeSerialRepository',
         () async {
       reset(timeSerialRepository);
-      final ChartPage chartPage = await repository.get(Pk<ChartPage>(1));
-      expect(chartPage.timeSerials.length, 2);
-      verify(() => timeSerialRepository.cache(chartPage.timeSerials[0]))
-          .called(1);
-      verify(() => timeSerialRepository.cache(chartPage.timeSerials[1]))
-          .called(1);
+      await repository.get(Pk<ChartPage>(1));
+      verify(() => timeSerialRepository.cache(any())).called(2);
     });
   });
 }

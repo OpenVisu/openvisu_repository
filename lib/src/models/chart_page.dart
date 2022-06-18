@@ -25,7 +25,6 @@ class ChartPage extends PageContent<ChartPage> {
 
   final ChartType chartType;
   final Duration interval;
-  final List<TimeSerial> timeSerials;
 
   const ChartPage(
     super.id,
@@ -35,26 +34,18 @@ class ChartPage extends PageContent<ChartPage> {
     super.updatedAt,
     this.chartType,
     this.interval,
-    this.timeSerials,
   );
 
   @override
   ChartPage.fromJson(Map<String, dynamic> data)
       : chartType = ChartType.fromString(data['chart_type']),
         interval = Duration(seconds: data['interval']),
-        timeSerials =
-            data.containsKey('timeSerials') && data['timeSerials'] != null
-                ? (data['timeSerials'] as List)
-                    .map((e) => TimeSerial.fromJson(e))
-                    .toList()
-                : [],
         super.fromJson(data);
 
   @override
   ChartPage.createDefault()
       : chartType = ChartType.line,
         interval = const Duration(hours: 1),
-        timeSerials = const [],
         super.createDefault();
 
   @override
@@ -77,7 +68,6 @@ class ChartPage extends PageContent<ChartPage> {
         updatedAt,
         chartType ?? this.chartType,
         interval ?? this.interval,
-        timeSerials ?? this.timeSerials,
       );
 
   @override
@@ -91,6 +81,5 @@ class ChartPage extends PageContent<ChartPage> {
   List<Object> get props => [
         chartType,
         interval,
-        timeSerials,
       ];
 }
