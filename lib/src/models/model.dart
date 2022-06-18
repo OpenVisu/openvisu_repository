@@ -40,7 +40,7 @@ abstract class Model<M extends Model<M>> extends Equatable {
     throw UnimplementedError('This model $this is not sortable.');
   }
 
-  bool get isNew => createdAt == 0;
+  bool get isNew => id.isNew;
 
   bool get requiresMultipartRequest => false;
 

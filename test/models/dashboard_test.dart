@@ -54,4 +54,15 @@ void main() {
         Dashboard(Pk<Dashboard>(1), Pk<User>(2), Pk<User>(3), 4, 5, '6', 5);
     expect(page9 == page10, true);
   });
+
+  test('Dashboard recreate test', () {
+    final Dashboard d1 = const Dashboard.createDefault().copyWith(
+      name: 'Dashboard 1',
+    );
+    expect(d1.id, const Pk<Dashboard>.newModel());
+
+    final Dashboard d2 = Dashboard.fromJson(d1.toMap());
+
+    expect(d2 == d1, true);
+  });
 }

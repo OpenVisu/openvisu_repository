@@ -32,9 +32,22 @@ class Pk<M extends Model<M>> {
     throw UnimplementedError('Invalid id type ${id.runtimeType}');
   }
 
-  Pk.newModel() : id = 0;
+  const Pk.newModel() : id = 0;
 
   const Pk.empty() : id = null;
+
+  factory Pk.fromJson(dynamic value) {
+    if (value == null) {
+      return Pk<M>.empty();
+    }
+    if (value == 0) {
+      return Pk<M>.newModel();
+    }
+    if (int.tryParse('$value') != null) {
+      return Pk<M>(int.tryParse('$value'));
+    }
+    return Pk<M>(value);
+  }
 
   bool get isEmpty => id == null;
 

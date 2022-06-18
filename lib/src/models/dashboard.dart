@@ -40,19 +40,21 @@ class Dashboard extends Model<Dashboard> {
       : name = data['name'],
         sort = data['sort'],
         super(
-          Pk<Dashboard>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
+          !data.containsKey('id')
+              ? const Pk<Dashboard>.newModel()
+              : Pk<Dashboard>.fromJson(data['id']),
+          Pk<User>.fromJson(data['created_by']),
+          Pk<User>.fromJson(data['updated_by']),
+          data['created_at'] ?? 0,
+          data['updated_at'] ?? 0,
         );
 
   @override
-  Dashboard.createDefault()
+  const Dashboard.createDefault()
       : name = '',
         sort = 0,
         super(
-          Pk<Dashboard>.newModel(),
+          const Pk<Dashboard>.newModel(),
           const Pk<User>.empty(),
           const Pk<User>.empty(),
           0,
@@ -61,7 +63,7 @@ class Dashboard extends Model<Dashboard> {
 
   @override
   Map<String, dynamic> toMap() => {
-        if (!isNew) 'id': id,
+        if (!isNew) 'id': id.toJson(),
         'name': name,
         'sort': sort,
       };
@@ -81,10 +83,15 @@ class Dashboard extends Model<Dashboard> {
     return sort;
   }
 
+
   @override
-  List<Object> get props => super.props
-    ..addAll([
-      name,
-      sort,
-    ]);
+  List<Object> get props => [
+        id,
+        createdBy,
+        updatedBy,
+        createdAt,
+        updatedAt,
+        name,
+        sort,
+      ];
 }
