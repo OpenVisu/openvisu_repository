@@ -48,11 +48,12 @@ void main() {
 
     test('test all()', () async {
       final List<Server> list = await serverRepository.all(null);
-      expect(list.length, 0);
+      expect(list.isNotEmpty, true);
     });
 
     late Pk<Server> id;
     test('test create()', () async {
+      final length = (await serverRepository.all(null)).length;
       Server server = Server.createDefault().copyWith(
         name: 'test server',
         description: 'test description',
@@ -60,11 +61,11 @@ void main() {
         rootNode: 'ns=2;i=1',
       );
       server = await serverRepository.add(server);
+      id = server.id;
       expect(server.name, 'test server');
       expect(server.description, 'test description');
-      final List<Server> list = await serverRepository.all(null);
-      expect(list.length, 1);
-      id = list.first.id;
+      final newLength = (await serverRepository.all(null)).length;
+      expect(newLength, length + 1);
     });
 
     test('test update()', () async {
@@ -76,11 +77,10 @@ void main() {
     });
 
     test('test delete()', () async {
-      List<Server> list = await serverRepository.all(null);
-      expect(list.length, 1);
+      final length = (await serverRepository.all(null)).length;
       await serverRepository.delete(id);
-      list = await serverRepository.all(null);
-      expect(list.length, 0);
+      final newLength = (await serverRepository.all(null)).length;
+      expect(newLength, length - 1);
     });
   });
 }

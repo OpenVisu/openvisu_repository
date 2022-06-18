@@ -51,13 +51,14 @@ void main() {
 
     test('test all()', () async {
       final List<ChartPage> list = await repository.all(null);
-      expect(list.length, 0);
+      expect(list.isNotEmpty, true);
     });
 
     late Pk<Page> id;
     late Pk<ChartPage> childId;
 
     test('test create()', () async {
+      final length = (await repository.all(null)).length;
       Page page = Page.createDefault().copyWith(
         name: 'ChartPage',
         dashboardId: Pk<Dashboard>(1),
@@ -69,8 +70,8 @@ void main() {
       expect(page.pageType, PageType.chart);
       expect(page.childId, isNotNull);
 
-      final List<ChartPage> list = await repository.all(null);
-      expect(list.length, 1);
+      final newLength = (await repository.all(null)).length;
+      expect(newLength, length + 1);
 
       final ChartPage chartPage = await repository.get(
         page.childId as Pk<ChartPage>,
@@ -90,15 +91,13 @@ void main() {
     });
 
     test('test delete()', () async {
-      List<Page> pageList = await pageRepository.all(null);
-      List<ChartPage> chartPageList = await repository.all(null);
-      expect(pageList.length, 2);
-      expect(chartPageList.length, 1);
+      final pageListLength = (await pageRepository.all(null)).length;
+      final chartPageListLength = (await repository.all(null)).length;
       await pageRepository.delete(id);
-      pageList = await pageRepository.all(null);
-      chartPageList = await repository.all(null);
-      expect(pageList.length, 1);
-      expect(chartPageList.length, 0);
+      final newPageListLength = (await pageRepository.all(null)).length;
+      final newChartPageListLength = (await repository.all(null)).length;
+      expect(newPageListLength, pageListLength - 1);
+      expect(newChartPageListLength, chartPageListLength - 1);
     });
   });
 }
