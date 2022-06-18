@@ -19,6 +19,8 @@ import 'package:mocktail/mocktail.dart';
 
 class MockTimeSerialRepository extends Mock implements TimeSerialRepository {}
 
+class MockTimeSerial extends Mock implements TimeSerial {}
+
 void main() {
   group('ChartPageRepository', () {
     final CredentialsRepository credentialsRepository = CredentialsRepository();
@@ -45,6 +47,7 @@ void main() {
     );
 
     setUp(() async {
+      registerFallbackValue(MockTimeSerial());
       await authenticationRepository.authenticate(
         credentials: credentialsAdmin,
         saveLogin: false,
