@@ -62,10 +62,10 @@ class Page extends Model<Page> {
   );
 
   static PageContent parseChild(Map<String, dynamic> data) {
-    if (!data.containsKey('child')) return const NonePage.createDefault();
+    if (!data.containsKey('child')) return NonePage.createDefault();
     PageType pageType = chartTypeFromString(data['child_type']);
     if (data['child'] == null) {
-      return const NonePage.createDefault();
+      return NonePage.createDefault();
     }
     switch (pageType) {
       case PageType.text:
@@ -79,7 +79,7 @@ class Page extends Model<Page> {
       case PageType.singleValue:
         return SingleValuePage.fromJson(data['child']);
       case PageType.none:
-        return const NonePage.createDefault();
+        return NonePage.createDefault();
     }
   }
 
@@ -91,28 +91,16 @@ class Page extends Model<Page> {
         pageType = chartTypeFromString(data['child_type']),
         childId = getChildModelKey(data['child_type'], data['child_id']),
         child = parseChild(data),
-        super(
-          Pk<Page>(data['id']),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   Page.createDefault()
       : name = '',
         sort = 0,
-        dashboardId = Pk<Dashboard>.newModel(),
+        dashboardId = const Pk<Dashboard>.newModel(),
         pageType = PageType.none,
         childId = const PageContentPk<NonePage>.empty(),
-        child = const NonePage.createDefault(),
-        super(
-          Pk<Page>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        child = NonePage.createDefault(),
+        super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {
@@ -152,7 +140,7 @@ class Page extends Model<Page> {
     required this.childId,
     this.sort,
   })  : assert(!id.isNew),
-        child = const NonePage.createDefault(),
+        child = NonePage.createDefault(),
         super(
           id,
           const Pk<User>.empty(),

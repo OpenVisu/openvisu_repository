@@ -35,23 +35,11 @@ class TextPage extends PageContent<TextPage> {
 
   TextPage.createDefault()
       : content = '',
-        super(
-          PageContentPk<TextPage>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   TextPage.fromJson(Map<String, dynamic> data)
       : content = data['content'],
-        super(
-          PageContentPk<TextPage>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

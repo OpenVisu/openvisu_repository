@@ -16,8 +16,6 @@
 import 'dart:core';
 
 import 'model.dart';
-import 'primary_key.dart';
-import 'user.dart';
 
 class Dashboard extends Model<Dashboard> {
   static const collection = 'dashboard';
@@ -39,27 +37,13 @@ class Dashboard extends Model<Dashboard> {
   Dashboard.fromJson(Map<String, dynamic> data)
       : name = data['name'],
         sort = data['sort'],
-        super(
-          !data.containsKey('id')
-              ? const Pk<Dashboard>.newModel()
-              : Pk<Dashboard>.fromJson(data['id']),
-          Pk<User>.fromJson(data['created_by']),
-          Pk<User>.fromJson(data['updated_by']),
-          data['created_at'] ?? 0,
-          data['updated_at'] ?? 0,
-        );
+        super.fromJson(data);
 
   @override
-  const Dashboard.createDefault()
+  Dashboard.createDefault()
       : name = '',
         sort = 0,
-        super(
-          const Pk<Dashboard>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {
@@ -82,7 +66,6 @@ class Dashboard extends Model<Dashboard> {
   int getSort() {
     return sort;
   }
-
 
   @override
   List<Object> get props => [

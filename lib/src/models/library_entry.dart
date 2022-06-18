@@ -58,13 +58,7 @@ class LibraryEntry extends Model<LibraryEntry> {
         fileName = '',
         hasPdf = false,
         pdfHash = null,
-        super(
-          Pk<LibraryEntry>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   LibraryEntry.fromJson(Map<String, dynamic> data)
@@ -75,13 +69,7 @@ class LibraryEntry extends Model<LibraryEntry> {
         fileName = '',
         hasPdf = data['hasPdf'],
         pdfHash = data['pdfHash'],
-        super(
-          Pk<LibraryEntry>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          0,
-          0,
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

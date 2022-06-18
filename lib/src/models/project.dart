@@ -59,13 +59,7 @@ class Project extends Model<Project> {
         hasLogoFile = data['hasLogoFile'],
         logoFileHash = data['logoFileHash'],
         logoFileName = null,
-        super(
-          Pk<Project>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

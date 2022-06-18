@@ -51,21 +51,15 @@ class SingleValuePage extends PageContent<SingleValuePage> {
   ) : super();
 
   SingleValuePage.createDefault()
-      : serverId = Pk<Server>.newModel(),
-        nodeId = Pk<Node>.newModel(),
+      : serverId = const Pk<Server>.newModel(),
+        nodeId = const Pk<Node>.newModel(),
         unit = '',
         resolution = 2,
         factor = 1,
         node = null,
         styleType = '',
         styleConfiguration = {},
-        super(
-          PageContentPk<SingleValuePage>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   SingleValuePage.fromJson(Map<String, dynamic> data)
       : serverId = Pk<Server>(data['server_id']),
@@ -78,13 +72,7 @@ class SingleValuePage extends PageContent<SingleValuePage> {
             : null,
         styleType = data['style_type'],
         styleConfiguration = jsonDecode(data['style_configuration']),
-        super(
-          PageContentPk<SingleValuePage>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

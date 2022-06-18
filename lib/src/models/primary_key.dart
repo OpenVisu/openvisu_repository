@@ -99,4 +99,17 @@ class PageContentPk<M extends PageContent<M>> extends Pk<M> {
 
   PageContentPk.newModel() : super.newModel();
   const PageContentPk.empty() : super.empty();
+
+  factory PageContentPk.fromJson(dynamic value) {
+    if (value == null) {
+      return PageContentPk<M>.empty();
+    }
+    if (value == 0) {
+      return PageContentPk<M>.newModel();
+    }
+    if (int.tryParse('$value') != null) {
+      return PageContentPk<M>(int.tryParse('$value'));
+    }
+    return PageContentPk<M>(value);
+  }
 }

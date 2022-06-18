@@ -77,13 +77,7 @@ class Node extends Model<Node> {
         changeValue = data['change_value'],
         changeErrorAt = data['change_error_at'],
         changeError = data['change_error'],
-        super(
-          Pk<Node>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

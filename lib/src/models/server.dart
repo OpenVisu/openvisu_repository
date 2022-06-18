@@ -60,13 +60,7 @@ class Server extends Model<Server> {
         hasConnectionError = false,
         connectionError = null,
         rootNode = '',
-        super(
-          Pk<Server>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   Server.fromJson(Map<String, dynamic> data)
       : name = data['name'],
@@ -78,13 +72,7 @@ class Server extends Model<Server> {
         hasConnectionError = data['has_connection_error'] == 1,
         connectionError = data['connection_error'],
         rootNode = data['root_node'] ?? '',
-        super(
-          Pk<Server>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

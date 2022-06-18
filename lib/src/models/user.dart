@@ -79,13 +79,7 @@ class User extends Model<User> {
         title = null,
         password = null,
         roles = [],
-        super(
-          Pk<User>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   User.fromJson(Map<String, dynamic> data)
       : username = data['username'],
@@ -103,13 +97,7 @@ class User extends Model<User> {
         title = data['title'],
         password = null,
         roles = (data['roles'] as List).map((e) => e as String).toList(),
-        super(
-          Pk<User>(data['id'] as int),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() {

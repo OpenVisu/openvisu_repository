@@ -67,13 +67,7 @@ class Me extends Model<Me> {
         roles = data['roles'].cast<String>(),
         permissions =
             (data['permissions'] as List).map((e) => Permission(e)).toList(),
-        super(
-          Pk<Me>(data['id'] as int),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.fromJson(data);
 
   Map<String, dynamic> toJson() => {
         'id': id,

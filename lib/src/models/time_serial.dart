@@ -77,13 +77,7 @@ class TimeSerial extends Model<TimeSerial> {
         factor = 1,
         alert = false,
         measurements = [],
-        super(
-          const Pk<TimeSerial>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   TimeSerial.fromJson(Map<String, dynamic> data)
@@ -106,15 +100,7 @@ class TimeSerial extends Model<TimeSerial> {
                     as TimeSeriesEntry<double?>)
                 .toList()
             : [],
-        super(
-          data['id'] != null
-              ? Pk<TimeSerial>.fromJson(data['id'])
-              : const Pk<TimeSerial>.newModel(),
-          Pk<User>.fromJson(data['created_by']),
-          Pk<User>.fromJson(data['updated_by']),
-          data['created_at'] ?? 0,
-          data['updated_at'] ?? 0,
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

@@ -17,7 +17,6 @@ import 'dart:core';
 
 import 'primary_key.dart';
 import 'page_content.dart';
-import 'user.dart';
 
 class IframePage extends PageContent<IframePage> {
   static const collection = 'iframe-page';
@@ -35,23 +34,11 @@ class IframePage extends PageContent<IframePage> {
 
   IframePage.fromJson(Map<String, dynamic> data)
       : src = data['src'],
-        super(
-          PageContentPk<IframePage>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   IframePage.createDefault()
       : src = '',
-        super(
-          PageContentPk<IframePage>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {

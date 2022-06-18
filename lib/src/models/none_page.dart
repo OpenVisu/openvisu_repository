@@ -14,8 +14,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'page_content.dart';
-import 'user.dart';
-import 'primary_key.dart';
 
 class NonePage extends PageContent<NonePage> {
   const NonePage(
@@ -26,14 +24,7 @@ class NonePage extends PageContent<NonePage> {
     super.updatedAt,
   );
 
-  const NonePage.createDefault()
-      : super(
-          const PageContentPk<NonePage>.empty(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+  NonePage.createDefault() : super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {};

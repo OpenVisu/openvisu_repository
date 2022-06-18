@@ -55,13 +55,7 @@ class Role extends Model<Role> {
       : name = '',
         description = '',
         permissions = [],
-        super(
-          Pk<Role>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   Role.fromJson(Map<String, dynamic> data)
       : name = data['name'],
@@ -71,13 +65,7 @@ class Role extends Model<Role> {
                 .map((e) => Permission.fromJson(e))
                 .toList()
             : [],
-        super(
-          Pk<Role>(data['name']),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {
@@ -92,7 +80,7 @@ class Role extends Model<Role> {
     final String? name, // NOTE name is only considered if new
   }) =>
       Role(
-        isNew ? Pk<Role>.newModel() : Pk<Role>(1),
+        isNew ? const Pk<Role>.newModel() : Pk<Role>(1),
         createdBy,
         updatedBy,
         createdAt,

@@ -42,26 +42,14 @@ class IFrame extends Model<IFrame> {
       : name = data['name'],
         sort = data['sort'],
         url = data['url'],
-        super(
-          Pk<IFrame>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   IFrame.createDefault()
       : name = '',
         url = '',
         sort = 0,
-        super(
-          Pk<IFrame>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {

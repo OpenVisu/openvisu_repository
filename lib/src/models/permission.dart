@@ -27,10 +27,10 @@ enum ActionType { create, read, update, delete }
 class Permission extends Model<Permission> {
   final String name;
 
-  Permission(
+  const Permission(
     this.name,
   ) : super(
-          Pk<Permission>.newModel(),
+          const Pk<Permission>.newModel(),
           const Pk<User>.empty(),
           const Pk<User>.empty(),
           0,
@@ -40,24 +40,13 @@ class Permission extends Model<Permission> {
   @override
   Permission.fromJson(Map<String, dynamic> data)
       : name = data['name'],
-        super(
-          Pk<Permission>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.fromJson(data);
 
+  // TODO rename?
   Permission.create(final ActionType actionType, final RightType rightType,
       final String subject)
       : name = generateName(actionType, rightType, subject),
-        super(
-          Pk<Permission>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   static String generateName(
       ActionType actionType, RightType rightType, String subject) {

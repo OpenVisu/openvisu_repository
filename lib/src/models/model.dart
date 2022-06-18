@@ -34,6 +34,22 @@ abstract class Model<M extends Model<M>> extends Equatable {
     this.updatedAt,
   );
 
+  Model.createDefault()
+      : id = Pk<M>.newModel(),
+        createdBy = const Pk<User>.empty(),
+        updatedBy = const Pk<User>.empty(),
+        createdAt = 0,
+        updatedAt = 0;
+
+  Model.fromJson(Map<String, dynamic> data)
+      : id = !data.containsKey('id')
+            ? Pk<M>.newModel()
+            : Pk<M>.fromJson(data['id']),
+        createdBy = Pk<User>.fromJson(data['created_by']),
+        updatedBy = Pk<User>.fromJson(data['updated_by']),
+        createdAt = data['created_at'] ?? 0,
+        updatedAt = data['updated_at'] ?? 0;
+
   Map<String, dynamic> toMap();
 
   int getSort() {

@@ -36,24 +36,12 @@ class Setting extends Model<Setting> {
   Setting.createDefault()
       : key = '',
         value = '',
-        super(
-          Pk<Setting>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   Setting.fromJson(Map<String, dynamic> data)
       : key = data['key'],
         value = '${data['value']}',
-        super(
-          Pk<Setting>(data['id']),
-          Pk<User>(data['created_by']),
-          Pk<User>(data['updated_by']),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() {

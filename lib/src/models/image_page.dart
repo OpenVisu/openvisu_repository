@@ -51,13 +51,7 @@ class ImagePage extends PageContent<ImagePage> {
         imageHash = data['imageHash'],
         binaryImage = null,
         imageFileName = null,
-        super(
-          PageContentPk<ImagePage>(int.parse('${data['id']}')),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   Map<String, dynamic> toMap() => {

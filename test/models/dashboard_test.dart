@@ -56,7 +56,7 @@ void main() {
   });
 
   test('Dashboard recreate test', () {
-    final Dashboard d1 = const Dashboard.createDefault().copyWith(
+    final Dashboard d1 = Dashboard.createDefault().copyWith(
       name: 'Dashboard 1',
     );
     expect(d1.id, const Pk<Dashboard>.newModel());

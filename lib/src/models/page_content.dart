@@ -31,4 +31,24 @@ abstract class PageContent<M extends PageContent<M>> extends Model<M> {
           createdAt,
           updatedAt,
         );
+
+  PageContent.createDefault()
+      : super(
+          PageContentPk<M>.newModel(),
+          const Pk<User>.empty(),
+          const Pk<User>.empty(),
+          0,
+          0,
+        );
+
+  PageContent.fromJson(Map<String, dynamic> data)
+      : super(
+          !data.containsKey('id')
+              ? PageContentPk<M>.newModel()
+              : PageContentPk<M>.fromJson(data['id']),
+          Pk<User>.fromJson(data['created_by']),
+          Pk<User>.fromJson(data['updated_by']),
+          data['created_at'] ?? 0,
+          data['updated_at'] ?? 0,
+        );
 }

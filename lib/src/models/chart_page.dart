@@ -19,7 +19,6 @@ import '../enums/chart_type.dart';
 import 'page_content.dart';
 import 'primary_key.dart';
 import 'time_serial.dart';
-import 'user.dart';
 
 class ChartPage extends PageContent<ChartPage> {
   static const collection = 'chart-page';
@@ -49,26 +48,14 @@ class ChartPage extends PageContent<ChartPage> {
                     .map((e) => TimeSerial.fromJson(e))
                     .toList()
                 : [],
-        super(
-          PageContentPk<ChartPage>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
-        );
+        super.fromJson(data);
 
   @override
   ChartPage.createDefault()
       : chartType = ChartType.line,
         interval = const Duration(hours: 1),
         timeSerials = const [],
-        super(
-          PageContentPk<ChartPage>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+        super.createDefault();
 
   @override
   Map<String, dynamic> toMap() => {
