@@ -58,7 +58,7 @@ class Pk<M extends Model<M>> {
 
   @override
   bool operator ==(other) {
-    if (other is! Pk) {
+    if (other is! Pk<M>) {
       return false;
     }
     return id == other.id;
