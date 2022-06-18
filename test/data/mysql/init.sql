@@ -1,4 +1,4 @@
---- MariaDB dump 10.19  Distrib 10.6.8-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.6.8-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: openvisu
 -- ------------------------------------------------------
@@ -145,7 +145,7 @@ CREATE TABLE `auth_token` (
   PRIMARY KEY (`id`),
   KEY `idx-auth_token-user_id` (`user_id`),
   CONSTRAINT `fk-auth_token-user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -177,7 +177,7 @@ CREATE TABLE `chart_page` (
   KEY `idx-chart-updated_by` (`updated_by`),
   CONSTRAINT `fk-chart-created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-chart-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,6 +186,7 @@ CREATE TABLE `chart_page` (
 
 LOCK TABLES `chart_page` WRITE;
 /*!40000 ALTER TABLE `chart_page` DISABLE KEYS */;
+INSERT INTO `chart_page` VALUES (1,1655541974,1655541974,1,1,'line',3600);
 /*!40000 ALTER TABLE `chart_page` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -249,7 +250,46 @@ CREATE TABLE `delete_history` (
 
 LOCK TABLES `delete_history` WRITE;
 /*!40000 ALTER TABLE `delete_history` DISABLE KEYS */;
+INSERT INTO `delete_history` VALUES (1,1655540624,1655540624,1,1,'chart_page'),(2,1655540624,1655540624,1,1,'page'),(2,1655540657,1655540657,1,1,'chart_page'),(3,1655540657,1655540657,1,1,'page'),(3,1655540702,1655540702,1,1,'chart_page'),(4,1655540702,1655540702,1,1,'page');
 /*!40000 ALTER TABLE `delete_history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `endpoint`
+--
+
+DROP TABLE IF EXISTS `endpoint`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `endpoint` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `server_id` int(11) NOT NULL,
+  `application_name` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `application_uri` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `product_uri` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `endpoint_url` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `checked_at` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx-endpoint-created_by` (`created_by`),
+  KEY `idx-endpoint-updated_by` (`updated_by`),
+  KEY `idx-endpoint-server_id` (`server_id`),
+  CONSTRAINT `fk-endpoint-created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk-endpoint-server_id` FOREIGN KEY (`server_id`) REFERENCES `server` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk-endpoint-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `endpoint`
+--
+
+LOCK TABLES `endpoint` WRITE;
+/*!40000 ALTER TABLE `endpoint` DISABLE KEYS */;
+/*!40000 ALTER TABLE `endpoint` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -472,7 +512,7 @@ CREATE TABLE `node` (
   CONSTRAINT `fk-node-created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-node-server_id` FOREIGN KEY (`server_id`) REFERENCES `server` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-node-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,6 +521,7 @@ CREATE TABLE `node` (
 
 LOCK TABLES `node` WRITE;
 /*!40000 ALTER TABLE `node` DISABLE KEYS */;
+INSERT INTO `node` VALUES (1,1655541649,1655541649,1,1,1,'ns=2;i=2','PressureA',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:PressureA','Int64',1,1,0,NULL,NULL,NULL,NULL),(2,1655541649,1655541649,1,1,1,'ns=2;i=3','PressureB',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:PressureB','Int64',1,1,0,NULL,NULL,NULL,NULL),(3,1655541649,1655541649,1,1,1,'ns=2;i=4','TemperatureOutside',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TemperatureOutside','Int64',1,0,0,NULL,NULL,NULL,NULL),(4,1655541649,1655541649,1,1,1,'ns=2;i=5','TemperatureInside',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TemperatureInside','Int64',1,0,0,NULL,NULL,NULL,NULL),(5,1655541649,1655541649,1,1,1,'ns=2;i=6','RadiatorA',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:RadiatorA','Int64',1,0,0,NULL,NULL,NULL,NULL),(6,1655541649,1655541649,1,1,1,'ns=2;i=7','RadiatorB',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:RadiatorB','Int64',1,0,0,NULL,NULL,NULL,NULL),(7,1655541650,1655541650,1,1,1,'ns=2;i=8','RadiatorC',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:RadiatorC','Int64',1,0,0,NULL,NULL,NULL,NULL),(8,1655541650,1655541773,1,1,1,'ns=2;i=9','SwitchA',1655541649,1,'/0:Root/0:Objects/2:Parameters/2:SwitchA','Boolean',1,1,0,NULL,NULL,NULL,NULL),(9,1655541650,1655541650,1,1,1,'ns=2;i=10','SwitchB',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:SwitchB','Boolean',1,1,0,NULL,NULL,NULL,NULL),(10,1655541650,1655541775,1,1,1,'ns=2;i=11','StringOne',1655541649,1,'/0:Root/0:Objects/2:Parameters/2:StringOne','String',1,0,0,NULL,NULL,NULL,NULL),(11,1655541650,1655541650,1,1,1,'ns=2;i=12','StringTwo',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:StringTwo','String',1,1,0,NULL,NULL,NULL,NULL),(12,1655541650,1655541650,1,1,1,'ns=2;i=14','TestVarBool',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarBool','Boolean',1,1,0,NULL,NULL,NULL,NULL),(13,1655541650,1655541777,1,1,1,'ns=2;i=15','TestVarFloat',1655541649,1,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarFloat','Float',1,1,0,NULL,NULL,NULL,NULL),(14,1655541650,1655541650,1,1,1,'ns=2;i=16','TestVarInt16',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarInt16','Int16',1,1,0,NULL,NULL,NULL,NULL),(15,1655541650,1655541779,1,1,1,'ns=2;i=17','TestVarInt32',1655541649,1,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarInt32','Int32',1,1,0,NULL,NULL,NULL,NULL),(16,1655541650,1655541650,1,1,1,'ns=2;i=18','TestVarInt64',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarInt64','Int64',1,1,0,NULL,NULL,NULL,NULL),(17,1655541650,1655541650,1,1,1,'ns=2;i=19','TestVarUInt16',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarUInt16','UInt16',1,1,0,NULL,NULL,NULL,NULL),(18,1655541650,1655541650,1,1,1,'ns=2;i=20','TestVarUInt32',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarUInt32','UInt32',1,1,0,NULL,NULL,NULL,NULL),(19,1655541650,1655541650,1,1,1,'ns=2;i=21','TestVarUInt64',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarUInt64','UInt64',1,1,0,NULL,NULL,NULL,NULL),(20,1655541650,1655541650,1,1,1,'ns=2;i=22','TestVarString',1655541649,0,'/0:Root/0:Objects/2:Parameters/2:TestVars/2:TestVarString','String',1,1,0,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `node` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -509,7 +550,7 @@ CREATE TABLE `page` (
   CONSTRAINT `fk-page-created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-page-dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-page-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -518,7 +559,7 @@ CREATE TABLE `page` (
 
 LOCK TABLES `page` WRITE;
 /*!40000 ALTER TABLE `page` DISABLE KEYS */;
-INSERT INTO `page` VALUES (1,1654461634,1654461634,1,1,1,'Page 1',1,'single_value_page',1);
+INSERT INTO `page` VALUES (1,1654461634,1654461634,1,1,1,'Page 1',1,'single_value_page',1),(2,1655541974,1655541974,1,1,5,'Page 2',1,'chart_page',1);
 /*!40000 ALTER TABLE `page` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -614,7 +655,7 @@ CREATE TABLE `server` (
   KEY `idx-server-updated_by` (`updated_by`),
   CONSTRAINT `fk-server-created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-server-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -623,6 +664,7 @@ CREATE TABLE `server` (
 
 LOCK TABLES `server` WRITE;
 /*!40000 ALTER TABLE `server` DISABLE KEYS */;
+INSERT INTO `server` VALUES (1,1655541170,1655542791,1,1,1,'sim-server','opc.tcp://opcua-fake:4842/','sim server for testing',1655542796,0,0,'','ns=2;i=1');
 /*!40000 ALTER TABLE `server` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -802,7 +844,7 @@ CREATE TABLE `time_serial` (
   CONSTRAINT `fk-time_serial-node_id` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-time_serial-server_id` FOREIGN KEY (`server_id`) REFERENCES `server` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk-time_serial-updated_by` FOREIGN KEY (`updated_by`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -811,6 +853,7 @@ CREATE TABLE `time_serial` (
 
 LOCK TABLES `time_serial` WRITE;
 /*!40000 ALTER TABLE `time_serial` DISABLE KEYS */;
+INSERT INTO `time_serial` VALUES (1,1655542634,1655542634,1,1,1,1,15,'SingleValue 1','#0000FF','mean','°C',2,1,-10,20,0),(2,1655542704,1655542704,1,1,1,1,13,'SingleValue 2','#f44336','mean','°C',2,1,-20,40,0);
 /*!40000 ALTER TABLE `time_serial` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -887,7 +930,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','admin@example.com','$2y$10$T2KbugAXj5cDTenC.lEwRO9pqmTZzCt2eOTw2Da1a4zD0oTKKjIEG','tpnISmXE98Zdydp8l6RlMigWA-yThFJs',NULL,'172.22.0.6',0,1654461602,NULL,1654461603,1654461602,1654461603,'172.22.0.6','',0,1654461602,0,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `user` VALUES (1,'admin','admin@example.com','$2y$10$T2KbugAXj5cDTenC.lEwRO9pqmTZzCt2eOTw2Da1a4zD0oTKKjIEG','tpnISmXE98Zdydp8l6RlMigWA-yThFJs',NULL,'172.22.0.6',0,1654461602,NULL,1655541612,1654461602,1655541612,'172.24.0.7','',0,1654461602,0,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -900,4 +943,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-05 20:40:42
+-- Dump completed on 2022-06-18  9:00:28
