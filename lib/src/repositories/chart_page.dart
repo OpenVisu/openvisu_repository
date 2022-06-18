@@ -18,7 +18,12 @@ import 'dart:core';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
 class ChartPageRepository extends CrudRepository<ChartPage> {
-  ChartPageRepository({required super.authenticationRepository});
+  final TimeSerialRepository timeSerialRepository;
+
+  ChartPageRepository({
+    required super.authenticationRepository,
+    required this.timeSerialRepository,
+  });
 
   @override
   Uri indexUrl() {
@@ -57,7 +62,13 @@ class ChartPageRepository extends CrudRepository<ChartPage> {
 
   @override
   ChartPage create(Map<String, dynamic>? data) {
-    return ChartPage.fromJson(data!);
+    final ChartPage model = ChartPage.fromJson(data!);
+    if (model.timeSerials.isNotEmpty) {
+      for (final TimeSerial ts in model.timeSerials) {
+        timeSerialRepository.cache(ts);
+      }
+    }
+    return model;
   }
 
   @override

@@ -15,6 +15,9 @@
 
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockTimeSerialRepository extends Mock implements TimeSerialRepository {}
 
 void main() {
   group('ChartPageRepository', () {
@@ -28,8 +31,11 @@ void main() {
     final PageRepository pageRepository = PageRepository(
       authenticationRepository: authenticationRepository,
     );
+    final TimeSerialRepository timeSerialRepository =
+        MockTimeSerialRepository();
     final ChartPageRepository repository = ChartPageRepository(
       authenticationRepository: authenticationRepository,
+      timeSerialRepository: timeSerialRepository,
     );
 
     const Credentials credentialsAdmin = Credentials(
@@ -98,6 +104,16 @@ void main() {
       final newChartPageListLength = (await repository.all(null)).length;
       expect(newPageListLength, pageListLength - 1);
       expect(newChartPageListLength, chartPageListLength - 1);
+    });
+
+    test('test is timeSerial models are promoted to timeSerialRepository',
+        () async {
+      final ChartPage chartPage = await repository.get(Pk<ChartPage>(1));
+      expect(chartPage.timeSerials.length, 2);
+      verify(() => timeSerialRepository.cache(chartPage.timeSerials[0]))
+          .called(1);
+      verify(() => timeSerialRepository.cache(chartPage.timeSerials[1]))
+          .called(1);
     });
   });
 }

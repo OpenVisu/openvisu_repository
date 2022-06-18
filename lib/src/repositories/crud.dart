@@ -202,6 +202,12 @@ abstract class CrudRepository<T extends Model<T>> extends BaseRepository
     return int.parse(json.decode(utf8.decode(response.bodyBytes))['data']);
   }
 
+  // if a model was loaded via another repository, it can be injected into the
+  // cache of another using tis method
+  void cache(final T model) {
+    setItemCache(model);
+  }
+
   /// http helper methods
   Future<http.Response> httpGet(final Uri uri) async {
     Response response = await SentryHttpClient().get(
