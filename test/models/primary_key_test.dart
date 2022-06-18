@@ -30,5 +30,30 @@ void main() {
     final stringKey1 = Pk<Dashboard>('1');
     final intKey1 = Pk<Dashboard>(1);
     expect(stringKey1 != intKey1, true);
+
+    expect(
+      Pk<Dashboard>.fromJson('1'),
+      Pk<Dashboard>(1),
+    );
+    expect(
+      Pk<Dashboard>.fromJson('test'),
+      Pk<Dashboard>('test'),
+    );
+
+    expect(
+      Pk<Dashboard>.fromJson(null),
+      const Pk<Dashboard>.empty(),
+    );
+
+    expect(
+      Pk<Dashboard>.fromJson(0),
+      const Pk<Dashboard>.newModel(),
+    );
+
+    expect(Pk<Dashboard>.fromJson(null) is Pk<Dashboard>, true);
+    expect(Pk<Dashboard>.fromJson(null) is Pk<Page>, false);
+    expect(Pk<Page>.fromJson(null) is Pk<Dashboard>, false);
+    expect(Pk<Page>.fromJson(null) is Pk<Page>, true);
+    expect(Pk<Dashboard>.fromJson(null) != Pk<Page>.fromJson(null), true);
   });
 }
