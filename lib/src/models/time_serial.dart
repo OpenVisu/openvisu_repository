@@ -64,7 +64,7 @@ class TimeSerial extends Model<TimeSerial> {
   );
 
   TimeSerial.createDefault()
-      : chartPageId = Pk<ChartPage>.newModel(),
+      : chartPageId = const Pk<ChartPage>.newModel(),
         serverId = const Pk<Server>.empty(),
         nodeId = const Pk<Node>.empty(),
         name = '',
@@ -78,7 +78,7 @@ class TimeSerial extends Model<TimeSerial> {
         alert = false,
         measurements = [],
         super(
-          Pk<TimeSerial>.newModel(),
+          const Pk<TimeSerial>.newModel(),
           const Pk<User>.empty(),
           const Pk<User>.empty(),
           0,
@@ -99,7 +99,7 @@ class TimeSerial extends Model<TimeSerial> {
         unit = data['unit'],
         resolution = data['resolution'],
         factor = double.parse('${data['factor']}'),
-        alert = (data['alert'] as int) == 1,
+        alert = data['alert'] == 1,
         measurements = data.containsKey('measurements')
             ? (data['measurements'] as List)
                 .map((e) => TimeSeriesEntry.fromJson(DataType.Double, e)
@@ -107,19 +107,21 @@ class TimeSerial extends Model<TimeSerial> {
                 .toList()
             : [],
         super(
-          Pk<TimeSerial>(data['id'] as int),
-          Pk<User>(data['created_by'] as int),
-          Pk<User>(data['updated_by'] as int),
-          data['created_at'],
-          data['updated_at'],
+          data['id'] != null
+              ? Pk<TimeSerial>.fromJson(data['id'])
+              : const Pk<TimeSerial>.newModel(),
+          Pk<User>.fromJson(data['created_by']),
+          Pk<User>.fromJson(data['updated_by']),
+          data['created_at'] ?? 0,
+          data['updated_at'] ?? 0,
         );
 
   @override
   Map<String, dynamic> toMap() => {
-        if (!isNew) 'id': id,
-        if (chartPageId.isNotEmpty) 'chart_page_id': chartPageId,
-        if (serverId.isNotEmpty) 'server_id': serverId,
-        if (nodeId.isNotEmpty) 'node_id': nodeId,
+        if (!isNew) 'id': id.toJson(),
+        if (chartPageId.isNotEmpty) 'chart_page_id': chartPageId.toJson(),
+        if (serverId.isNotEmpty) 'server_id': serverId.toJson(),
+        if (nodeId.isNotEmpty) 'node_id': nodeId.toJson(),
         'name': name,
         'color': colorHex,
         'min_value': minValue,
@@ -128,7 +130,7 @@ class TimeSerial extends Model<TimeSerial> {
         'unit': unit,
         'resolution': resolution,
         'factor': factor,
-        'alert': alert,
+        'alert': alert ? 1 : 0,
       };
 
   TimeSerial copyWith({
