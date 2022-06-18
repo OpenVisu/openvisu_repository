@@ -50,10 +50,14 @@ void main() {
       const Pk<Dashboard>.newModel(),
     );
 
+    // custom == implementation the linter is not aware of
+    // ignore: unnecessary_type_check
     expect(Pk<Dashboard>.fromJson(null) is Pk<Dashboard>, true);
     expect(Pk<Dashboard>.fromJson(null) is Pk<Page>, false);
     expect(Pk<Page>.fromJson(null) is Pk<Dashboard>, false);
+    // ignore: unnecessary_type_check
     expect(Pk<Page>.fromJson(null) is Pk<Page>, true);
+    // ignore: unrelated_type_equality_checks
     expect(Pk<Dashboard>.fromJson(null) != Pk<Page>.fromJson(null), true);
   });
 }

@@ -20,7 +20,6 @@ import 'node.dart';
 import 'page_content.dart';
 import 'primary_key.dart';
 import 'server.dart';
-import 'user.dart';
 
 class SingleValuePage extends PageContent<SingleValuePage> {
   static const collection = 'single-value-page';

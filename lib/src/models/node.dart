@@ -20,7 +20,6 @@ import 'model.dart';
 import 'primary_key.dart';
 import 'server.dart';
 import 'time_series_entry.dart';
-import 'user.dart';
 
 class Node extends Model<Node> {
   static const collection = 'node';

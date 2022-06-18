@@ -16,8 +16,6 @@
 import 'dart:core';
 
 import 'model.dart';
-import 'primary_key.dart';
-import 'user.dart';
 
 class IFrame extends Model<IFrame> {
   static const collection = 'i-frame';

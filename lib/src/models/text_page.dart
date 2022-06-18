@@ -17,7 +17,6 @@ import 'dart:core';
 
 import 'page_content.dart';
 import 'primary_key.dart';
-import 'user.dart';
 
 class TextPage extends PageContent<TextPage> {
   static const collection = 'text-page';

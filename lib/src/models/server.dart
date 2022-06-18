@@ -16,8 +16,6 @@
 import 'dart:core';
 
 import 'model.dart';
-import 'primary_key.dart';
-import 'user.dart';
 import 'package:flutter/material.dart';
 
 class Server extends Model<Server> {

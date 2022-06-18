@@ -23,7 +23,6 @@ import 'node.dart';
 import 'primary_key.dart';
 import 'server.dart';
 import 'time_series_entry.dart';
-import 'user.dart';
 
 class TimeSerial extends Model<TimeSerial> {
   static const collection = 'time-serial';

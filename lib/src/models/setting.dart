@@ -16,8 +16,6 @@
 import 'dart:core';
 
 import 'model.dart';
-import 'primary_key.dart';
-import 'user.dart';
 
 class Setting extends Model<Setting> {
   final String key;

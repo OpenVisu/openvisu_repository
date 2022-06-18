@@ -16,8 +16,6 @@
 import 'dart:core';
 import 'dart:typed_data';
 
-import 'primary_key.dart';
-import 'user.dart';
 import '../repositories/authentication.dart';
 import 'package:http/http.dart';
 
