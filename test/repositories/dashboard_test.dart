@@ -18,9 +18,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('DashboardRepository', () {
-    late AuthenticationRepository authenticationRepository;
-    late CredentialsRepository credentialsRepository;
-    late DashboardRepository dashboardRepository;
+    final CredentialsRepository credentialsRepository = CredentialsRepository();
+
+    final AuthenticationRepository authenticationRepository =
+        AuthenticationRepository(
+      credentialsRepository: credentialsRepository,
+      httpTimeOut: const Duration(seconds: 10),
+    );
+
+    final DashboardRepository dashboardRepository = DashboardRepository(
+      authenticationRepository: authenticationRepository,
+    );
 
     const Credentials credentialsAdmin = Credentials(
       username: 'admin',
@@ -31,15 +39,6 @@ void main() {
     final Pk<Dashboard> id1 = Pk<Dashboard>(1);
 
     setUp(() async {
-      credentialsRepository = CredentialsRepository();
-      authenticationRepository = AuthenticationRepository(
-        credentialsRepository: credentialsRepository,
-        httpTimeOut: const Duration(seconds: 10),
-      );
-      dashboardRepository = DashboardRepository(
-        authenticationRepository: authenticationRepository,
-      );
-
       await authenticationRepository.authenticate(
         credentials: credentialsAdmin,
         saveLogin: false,
