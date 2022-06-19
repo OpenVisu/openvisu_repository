@@ -37,7 +37,7 @@ class TextPage extends PageContent<TextPage> {
         super.createDefault();
 
   TextPage.fromJson(Map<String, dynamic> data)
-      : content = data['content'],
+      : content = data['content'] ?? '', // TODO solve in db,
         super.fromJson(data);
 
   @override
