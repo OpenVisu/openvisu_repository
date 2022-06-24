@@ -16,7 +16,6 @@
 import 'dart:core';
 
 import 'package:openvisu_repository/src/enums/aggregation_function_type.dart';
-import '../enums/data_type.dart';
 import 'chart_page.dart';
 import 'model.dart';
 import 'node.dart';
@@ -39,7 +38,6 @@ class TimeSerial extends Model<TimeSerial> {
   final int resolution;
   final double factor;
   final bool alert;
-  final List<TimeSeriesEntry<double?>> measurements;
 
   const TimeSerial(
     super.id,
@@ -59,7 +57,6 @@ class TimeSerial extends Model<TimeSerial> {
     this.resolution,
     this.factor,
     this.alert,
-    this.measurements,
   );
 
   TimeSerial.createDefault()
@@ -75,7 +72,6 @@ class TimeSerial extends Model<TimeSerial> {
         resolution = 2,
         factor = 1,
         alert = false,
-        measurements = [],
         super.createDefault();
 
   @override
@@ -93,12 +89,6 @@ class TimeSerial extends Model<TimeSerial> {
         resolution = data['resolution'],
         factor = double.parse('${data['factor']}'),
         alert = data['alert'] == 1,
-        measurements = data.containsKey('measurements')
-            ? (data['measurements'] as List)
-                .map((e) => TimeSeriesEntry.fromJson(DataType.Double, e)
-                    as TimeSeriesEntry<double?>)
-                .toList()
-            : [],
         super.fromJson(data);
 
   @override
@@ -151,7 +141,6 @@ class TimeSerial extends Model<TimeSerial> {
         resolution ?? this.resolution,
         factor ?? this.factor,
         alert ?? this.alert,
-        measurements ?? this.measurements,
       );
 
   @override
@@ -169,6 +158,5 @@ class TimeSerial extends Model<TimeSerial> {
       resolution,
       factor,
       alert,
-      measurements,
     ]);
 }

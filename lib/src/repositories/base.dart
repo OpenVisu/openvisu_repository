@@ -36,7 +36,7 @@ abstract class BaseRepository {
     throw UnimplementedError('Swapping is not supported.');
   }
 
-  Model create(Map<String, dynamic> data);
+  Model create(final Map<String, dynamic> data);
 
   Model createDefault();
 

@@ -36,7 +36,6 @@ void main() {
       15,
       16,
       false,
-      const [],
     );
 
     final ts2 = TimeSerial(
@@ -57,7 +56,6 @@ void main() {
       15,
       16,
       false,
-      const [],
     );
 
     final ts3 = TimeSerial(
@@ -78,7 +76,6 @@ void main() {
       15,
       16,
       false,
-      const [],
     );
 
     expect(ts1, ts2);
