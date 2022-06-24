@@ -17,9 +17,13 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockTimeSerialRepository extends Mock implements TimeSerialRepository {}
+class MockTimeSeriesEntryRepository extends Mock
+    implements TimeSeriesEntryRepository {}
 
-class MockTimeSerial extends Mock implements TimeSerial {}
+class MockPkTimeSerial extends Mock implements Pk<TimeSerial> {}
+
+class MockTimeSeriesEntryDouble extends Mock
+    implements TimeSeriesEntry<double?> {}
 
 void main() {
   group('ChartPageRepository', () {
@@ -33,8 +37,15 @@ void main() {
     final PageRepository pageRepository = PageRepository(
       authenticationRepository: authenticationRepository,
     );
-    final TimeSerialRepository timeSerialRepository =
-        MockTimeSerialRepository();
+
+    final MockTimeSeriesEntryRepository timeSeriesEntryRepository =
+        MockTimeSeriesEntryRepository();
+    final TimeSerialRepository timeSerialRepository = TimeSerialRepository(
+      authenticationRepository: authenticationRepository,
+      measurementsRepository: MeasurementsRepository(
+        timeSeriesEntryRepository: timeSeriesEntryRepository,
+      ),
+    );
     final ChartPageRepository repository = ChartPageRepository(
       authenticationRepository: authenticationRepository,
       timeSerialRepository: timeSerialRepository,
@@ -47,7 +58,9 @@ void main() {
     );
 
     setUp(() async {
-      registerFallbackValue(MockTimeSerial());
+      registerFallbackValue(MockPkTimeSerial());
+      registerFallbackValue(MockTimeSeriesEntryDouble());
+
       await authenticationRepository.authenticate(
         credentials: credentialsAdmin,
         saveLogin: false,
@@ -65,7 +78,6 @@ void main() {
 
     late Pk<Page> id;
     late Pk<ChartPage> childId;
-
     test('test create()', () async {
       final length = (await repository.all(null)).length;
       Page page = Page.createDefault().copyWith(
@@ -109,11 +121,12 @@ void main() {
       expect(newChartPageListLength, chartPageListLength - 1);
     });
 
-    test('test if timeSerial models are promoted to timeSerialRepository',
+    test(
+        'test if measurements of timeSerial models are promoted to timeSeriesEntryRepository',
         () async {
-      reset(timeSerialRepository);
+      reset(timeSeriesEntryRepository);
       await repository.get(Pk<ChartPage>(1));
-      verify(() => timeSerialRepository.cache(any())).called(2);
+      verify(() => timeSeriesEntryRepository.cacheLast(any(), any())).called(2);
     });
   });
 }

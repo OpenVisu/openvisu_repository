@@ -27,6 +27,9 @@ void main() {
 
     final TimeSerialRepository repository = TimeSerialRepository(
       authenticationRepository: authenticationRepository,
+      measurementsRepository: MeasurementsRepository(
+        timeSeriesEntryRepository: TimeSeriesEntryRepository(),
+      ),
     );
 
     const Credentials credentialsAdmin = Credentials(

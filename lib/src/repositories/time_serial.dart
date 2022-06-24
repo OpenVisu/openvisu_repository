@@ -18,7 +18,12 @@ import 'dart:core';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
 class TimeSerialRepository extends CrudRepository<TimeSerial> {
-  TimeSerialRepository({required super.authenticationRepository});
+  final MeasurementsRepository measurementsRepository;
+
+  TimeSerialRepository({
+    required super.authenticationRepository,
+    required this.measurementsRepository,
+  });
 
   @override
   Uri indexUrl() {
@@ -56,8 +61,25 @@ class TimeSerialRepository extends CrudRepository<TimeSerial> {
   }
 
   @override
-  TimeSerial create(Map<String, dynamic>? data) {
-    return TimeSerial.fromJson(data!);
+  TimeSerial create(Map<String, dynamic> data) {
+    final TimeSerial model = TimeSerial.fromJson(data);
+
+    // sideload data
+    if (data.containsKey('measurements') && data['measurements'] != null) {
+      measurementsRepository.sideload(model.id, data['measurements']);
+    }
+
+    return model;
+  }
+
+  void sideloadMultiple(List<dynamic> data) {
+    for (Map<String, dynamic> d in data) {
+      sideloadOne(d);
+    }
+  }
+
+  void sideloadOne(Map<String, dynamic> data) {
+    cache(create(data));
   }
 
   @override

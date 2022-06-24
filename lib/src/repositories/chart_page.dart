@@ -61,17 +61,12 @@ class ChartPageRepository extends CrudRepository<ChartPage> {
   }
 
   @override
-  ChartPage create(Map<String, dynamic>? data) {
-    final ChartPage model = ChartPage.fromJson(data!);
+  ChartPage create(final Map<String, dynamic> data) {
+    final ChartPage model = ChartPage.fromJson(data);
 
     // sideload data
     if (data.containsKey('timeSerials') && data['timeSerials'] != null) {
-      final List<TimeSerial> timeSerials = (data['timeSerials'] as List)
-          .map((e) => TimeSerial.fromJson(e))
-          .toList();
-      for (final TimeSerial ts in timeSerials) {
-        timeSerialRepository.cache(ts);
-      }
+      timeSerialRepository.sideloadMultiple(data['timeSerials']);
     }
 
     return model;
