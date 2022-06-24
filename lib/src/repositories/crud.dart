@@ -218,8 +218,6 @@ abstract class CrudRepository<T extends Model<T>> extends BaseRepository
   }
 
   Future<http.Response> httpPost(final Uri uri, jsonData) async {
-    log.severe('posting');
-    log.severe(json.encode(jsonData));
     Response response = await SentryHttpClient().post(
       uri,
       body: json.encode(jsonData),
