@@ -64,9 +64,6 @@ abstract class Model<M extends Model<M>> extends Equatable {
 
   List<MultipartFile> getMultipartFiles() => [];
 
-  /// do stuff that needs to be done before this entry is deleted
-  Future<void> beforeDelete() async {}
-
   @override
   bool get stringify => true;
 
