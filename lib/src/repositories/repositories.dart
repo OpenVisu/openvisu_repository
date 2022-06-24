@@ -36,3 +36,4 @@ export 'time_serial.dart';
 export 'user.dart';
 export 'crud.dart';
 export 'project.dart';
+export 'time_series_entry.dart';
