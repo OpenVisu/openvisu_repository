@@ -70,11 +70,6 @@ class ChartPage extends PageContent<ChartPage> {
         interval ?? this.interval,
       );
 
-  @override
-  Future<void> beforeDelete() async {
-    // TODO empty timeSerial caches
-  }
-
   bool isLive() => chartType.isLive();
 
   @override
