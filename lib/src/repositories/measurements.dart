@@ -44,6 +44,19 @@ class MeasurementsRepository {
     return [];
   }
 
+  Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> getMultipleCached(
+    List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    return {
+      for (Pk<TimeSerial> id in timeSerialIds)
+        id: _cache[id]!
+            .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
+            .toList(),
+    };
+  }
+
   void sideload(final Pk<TimeSerial> id, List<dynamic> data) {
     final List<TimeSeriesEntry<double?>> measurements = data
         .map((e) => TimeSeriesEntry.fromJson(DataType.Double, e)
