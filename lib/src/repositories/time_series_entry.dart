@@ -19,12 +19,19 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 /// currently the values need to be sideloaded
 class TimeSeriesEntryRepository {
   final Map<Pk<TimeSerial>, TimeSeriesEntry<double?>> _cacheLast = {};
+  DateTime lastChange = DateTime.now();
+
+  bool hasChanged(final DateTime since) {
+    return lastChange.isAfter(since);
+  }
 
   cacheLast(final Pk<TimeSerial> id, final TimeSeriesEntry<double?> tse) {
     if (!_cacheLast.containsKey(id)) {
       _cacheLast[id] = tse;
+      lastChange = DateTime.now();
     } else if (_cacheLast[id]!.time.isBefore(tse.time)) {
       _cacheLast[id] = tse;
+      lastChange = DateTime.now();
     }
   }
 
