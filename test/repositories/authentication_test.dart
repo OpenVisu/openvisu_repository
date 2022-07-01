@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import 'dart:io';
+
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,6 +26,12 @@ void main() {
     const Credentials credentialsAdmin = Credentials(
       username: 'admin',
       password: 'password',
+      endpoint: 'http://localhost/',
+    );
+
+    const Credentials credentialsWrong = Credentials(
+      username: '1234',
+      password: '56789',
       endpoint: 'http://localhost/',
     );
 
@@ -50,6 +58,23 @@ void main() {
       expect(authenticationRepository.hasOpenSession(), true);
 
       await authenticationRepository.doLogout();
+
+      expect(authenticationRepository.hasOpenSession(), false);
+    });
+
+    test('test authenticate() fail', () async {
+      expect(authenticationRepository.hasOpenSession(), false);
+
+      expect(
+        () async => await authenticationRepository.authenticate(
+          credentials: credentialsWrong,
+          saveLogin: false,
+        ),
+        throwsA(
+          isA<HttpException>().having(
+              (s) => s.message, 'message', startsWith('Failed to login as ')),
+        ),
+      );
 
       expect(authenticationRepository.hasOpenSession(), false);
     });
