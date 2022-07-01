@@ -83,7 +83,7 @@ class AuthenticationRepository {
             ),
           )
           .timeout(httpTimeOut);
-      if (response.statusCode != 200) {
+      if (response.statusCode != HttpStatus.ok) {
         throw HttpException('Failed to login as Guest '
             'at ${response.statusCode}.');
       }
