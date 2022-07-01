@@ -68,6 +68,18 @@ void main() {
       expect(newLength, length + 1);
     });
 
+    test('test swap()', () async {
+      List<Page> list = await repository.all(null);
+      expect(list[0].name, 'Page 1');
+      expect(list[1].name, 'Page 2');
+
+      await repository.swap(list[0], list[1]);
+
+      list = await repository.all(null);
+      expect(list[0].name, 'Page 2');
+      expect(list[1].name, 'Page 1');
+    });
+
     test('test update()', () async {
       Page page = await repository.get(id);
       expect(page.name, 'Test Page');
