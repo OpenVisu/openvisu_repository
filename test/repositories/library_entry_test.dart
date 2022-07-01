@@ -16,7 +16,9 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
+import 'package:crypto/crypto.dart';
 
 void main() {
   group('LibraryEntryRepository', () {
@@ -56,6 +58,7 @@ void main() {
     late Pk<LibraryEntry> id;
     test('test create()', () async {
       final File testFile = File('./test/data/files/test.pdf');
+      expect(await testFile.length(), 8865);
 
       LibraryEntry libraryEntry = LibraryEntry.createDefault().copyWith(
         name: 'Test Library Entry',
@@ -69,7 +72,10 @@ void main() {
       expect(libraryEntry.name, 'Test Library Entry');
       expect(libraryEntry.sort, int.tryParse(libraryEntry.id.toString()));
       expect(libraryEntry.hasPdf, true);
-      expect(libraryEntry.pdfHash, 'af1d0071b69890fafd1ba850cc2a81605f7f8cf3');
+      expect(
+        libraryEntry.pdfHash,
+        sha1.convert(testFile.readAsBytesSync()).toString(),
+      );
       expect(
         libraryEntry.documentUrl,
         'http://localhost//api/library_manager/library-entry/view-file?id=${libraryEntry.id.toString()}&attribute=file&hash=af1d0071b69890fafd1ba850cc2a81605f7f8cf3',
@@ -84,6 +90,20 @@ void main() {
           .update(LibraryEntry.patch(id, name: 'Test Library Entry 2'));
       expect(libraryEntry.name, 'Test Library Entry 2');
       expect(libraryEntry.pdfHash, 'af1d0071b69890fafd1ba850cc2a81605f7f8cf3');
+    });
+
+    test('test document url', () async {
+      final LibraryEntry libraryEntry = await repository.get(id);
+      final response = await get(
+        Uri.parse(libraryEntry.documentUrl!),
+      );
+      expect(response.statusCode, HttpStatus.ok);
+      expect(response.contentLength, 8865);
+
+      expect(
+        sha1.convert(response.bodyBytes).toString(),
+        libraryEntry.pdfHash,
+      );
     });
 
     test('test delete()', () async {
