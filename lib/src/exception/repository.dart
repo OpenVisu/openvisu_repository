@@ -33,4 +33,7 @@ class BackendError implements Exception {
   final BackendErrorInformation info;
 
   BackendError(this.info);
+
+  @override
+  String toString() => 'BackendError: $info';
 }
