@@ -34,7 +34,7 @@ class LibraryEntry extends Model<LibraryEntry> {
   final String? pdfHash;
 
   String? get documentUrl => hasPdf
-      ? '${AuthenticationRepository.serverUrl}/api/library_manager/library-entry/view-file?id=$id&attribute=file&time=$pdfHash'
+      ? '${AuthenticationRepository.serverUrl}/api/library_manager/library-entry/view-file?id=$id&attribute=file&hash=$pdfHash'
       : null;
 
   const LibraryEntry(
