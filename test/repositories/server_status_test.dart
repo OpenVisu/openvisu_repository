@@ -23,9 +23,7 @@ void main() {
     const String server1 = 'http://localhost/';
 
     setUp(() async {
-      serverStatusRepository = ServerStatusRepository(
-        const Duration(seconds: 10),
-      );
+      serverStatusRepository = ServerStatusRepository();
     });
 
     test('test credentials.all()', () async {

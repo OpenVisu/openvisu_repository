@@ -29,7 +29,7 @@ class ServerStatusRepository {
 
   final Duration httpTimeOut;
 
-  ServerStatusRepository(this.httpTimeOut);
+  ServerStatusRepository({this.httpTimeOut = const Duration(seconds: 10)});
 
   Future<ServerStatus> get(
     final String serverUrl, {
