@@ -68,7 +68,7 @@ class AuthenticationRepository {
       if (response.statusCode != HttpStatus.ok) {
         log.severe('Failed to login: ${response.body}');
         throw HttpException('Failed to login as ${credentials.username} '
-            'at ${response.statusCode}.');
+            'HttpStatus: ${response.statusCode}.');
       }
 
       final Map<String, dynamic> data = json.decode(response.body);
@@ -85,7 +85,7 @@ class AuthenticationRepository {
           .timeout(httpTimeOut);
       if (response.statusCode != HttpStatus.ok) {
         throw HttpException('Failed to login as Guest '
-            'at ${response.statusCode}.');
+            'HttpStatus: ${response.statusCode}.');
       }
 
       final Map<String, dynamic> data = json.decode(response.body);
