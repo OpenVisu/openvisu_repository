@@ -195,13 +195,6 @@ abstract class CrudRepository<T extends Model<T>> extends BaseRepository
     return response.statusCode == HttpStatus.ok;
   }
 
-  Future<int> editNode(final int? nodeId, final newValue) async {
-    final String? token = await authenticationRepository.getTokenString();
-    final response = await SentryHttpClient().post(Uri.parse(
-        '${AuthenticationRepository.serverUrl}/api/portal/custom/set_node_value/$nodeId/$newValue?access_token=$token'));
-    return int.parse(json.decode(utf8.decode(response.bodyBytes))['data']);
-  }
-
   // if a model was loaded via another repository, it can be injected into the
   // cache of another using tis method
   void cache(final T model) {
