@@ -46,21 +46,16 @@ class AuthenticationRepository {
   static Me? me;
   static Token? token;
 
-  final Duration tokenRefreshInterval = const Duration(minutes: 5);
-  late Timer timer = Timer.periodic(tokenRefreshInterval, (final Timer t) {
-    _refreshToken();
-  });
-
   final Duration httpTimeOut;
 
   AuthenticationRepository({
     required this.credentialsRepository,
-    required this.httpTimeOut,
+    this.httpTimeOut = const Duration(seconds: 10),
   });
 
   Future<void> authenticate({
-    required Credentials credentials,
-    required bool saveLogin,
+    required final Credentials credentials,
+    required final bool saveLogin,
   }) async {
     serverUrl = credentials.endpoint;
 
@@ -102,13 +97,6 @@ class AuthenticationRepository {
     await persistToken(token!);
     await persistMe(me!);
 
-    if (token!.isGuest()) {
-      timer.cancel();
-    } else if (!timer.isActive) {
-      timer = Timer.periodic(tokenRefreshInterval, (Timer t) {
-        _refreshToken();
-      });
-    }
     if (saveLogin) {
       credentialsRepository.add(credentials);
     }
@@ -119,8 +107,6 @@ class AuthenticationRepository {
   }
 
   Future<void> doLogout() async {
-    timer.cancel();
-
     if (hasOpenSession() && !isGuest()) {
       try {
         final response = await http.post(
@@ -189,34 +175,6 @@ class AuthenticationRepository {
     return token != null;
   }
 
-  bool isRefreshingToken = false;
-
-  Future<void> _refreshToken() async {
-    if (isRefreshingToken) {
-      return;
-    }
-    isRefreshingToken = true;
-
-    log.severe('_refreshToken');
-
-    /* TODO check if token is still valid and update if needed
-    final response = await http.post(
-      Uri.parse('${AuthenticationRepository.serverUrl}/api/portal/auth/refresh'),
-      body: {"token": token},
-    ).timeout(httpTimeOut);
-
-    if (response.statusCode == 200) {
-      this.jwtToken = json.decode(response.body)['data']['token'];
-      await storage.setItem('jwtToken', jwtToken);
-      this.jwtPayload = Jwt.decodePayload(this.jwtToken);
-      isRefreshingToken = false;
-    } else {
-      isRefreshingToken = false;
-      throw Exception('Failed to refresh token.');
-    }
-     */
-  }
-
   Future<String?> getTokenString() async {
     if (await hasToken()) {
       return token!.token;
@@ -253,9 +211,9 @@ class AuthenticationRepository {
   }
 
   bool can({
-    required ActionType action,
+    required final ActionType action,
     required final String subject,
-    Pk<User>? ownerId,
+    final Pk<User>? ownerId,
   }) {
     if (isAdmin()) {
       return true;
