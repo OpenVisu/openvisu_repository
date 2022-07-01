@@ -37,6 +37,7 @@ void main() {
     );
 
     final Pk<Dashboard> id1 = Pk<Dashboard>(1);
+    final Pk<Dashboard> idNotExisting = Pk<Dashboard>(1234);
 
     setUp(() async {
       await authenticationRepository.authenticate(
@@ -80,6 +81,17 @@ void main() {
       list = await dashboardRepository.all(null);
       expect(list.length, 1);
       expect(list.first.id == id1, true);
+    });
+
+    test('test dashboardRepository.get() notFound.', () async {
+      expect(
+        () async => await dashboardRepository.get(idNotExisting),
+        throwsA(isA<BackendError>().having(
+          (s) => (s.info as YiiExceptionInformation).name,
+          'info.name',
+          'Not Found',
+        )),
+      );
     });
   });
 }
