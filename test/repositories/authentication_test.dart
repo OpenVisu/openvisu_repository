@@ -34,6 +34,11 @@ void main() {
       password: '56789',
       endpoint: 'http://localhost/',
     );
+    const Credentials credentialsGuest = Credentials(
+      username: null,
+      password: null,
+      endpoint: 'http://localhost/',
+    );
 
     setUp(() {
       credentialsRepository = CredentialsRepository();
@@ -77,6 +82,18 @@ void main() {
       );
 
       expect(authenticationRepository.hasOpenSession(), false);
+    });
+
+    test('test authenticate() guest', () async {
+      expect(authenticationRepository.hasOpenSession(), false);
+
+      await authenticationRepository.authenticate(
+        credentials: credentialsGuest,
+        saveLogin: false,
+      );
+
+      expect(authenticationRepository.hasOpenSession(), true);
+      expect(authenticationRepository.isGuest(), true);
     });
 
     test('test authentication.isAdmin().', () async {
