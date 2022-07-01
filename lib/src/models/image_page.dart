@@ -101,7 +101,7 @@ class ImagePage extends PageContent<ImagePage> {
   @override
   List<MultipartFile> getMultipartFiles() {
     return [
-      if (binaryImage != null)
+      if (binaryImage != null && imageFileName != null)
         MultipartFile.fromBytes(
           'ImagePage[image]',
           binaryImage!,

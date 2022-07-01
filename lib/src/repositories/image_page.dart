@@ -56,8 +56,8 @@ class ImagePageRepository extends CrudRepository<ImagePage> {
   }
 
   @override
-  Model create(Map<String, dynamic>? data) {
-    return ImagePage.fromJson(data!);
+  Model create(final Map<String, dynamic> data) {
+    return ImagePage.fromJson(data);
   }
 
   @override
