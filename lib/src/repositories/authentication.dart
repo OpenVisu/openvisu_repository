@@ -65,7 +65,7 @@ class AuthenticationRepository {
         body: {"login": credentials.username, "password": credentials.password},
       ).timeout(httpTimeOut);
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != HttpStatus.ok) {
         log.severe('Failed to login: ${response.body}');
         throw HttpException('Failed to login as ${credentials.username} '
             'at ${response.statusCode}.');
