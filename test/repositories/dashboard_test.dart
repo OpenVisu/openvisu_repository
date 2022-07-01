@@ -72,6 +72,32 @@ void main() {
       expect(createdDashboard.name, 'Dashboard 2');
     });
 
+    test('test dashboardRepository.sort().', () async {
+      Dashboard newDashboard = Dashboard.createDefault().copyWith(
+        name: 'Dashboard 3',
+      );
+      newDashboard = await dashboardRepository.add(newDashboard);
+      List<Dashboard> list = await dashboardRepository.all(null);
+
+      expect(list[0].name, 'Dashboard 1');
+      expect(list[1].name, 'Dashboard 2');
+      expect(list[2].name, 'Dashboard 3');
+
+      await dashboardRepository.sort([
+        list[2].id,
+        list[0].id,
+        list[1].id,
+      ]);
+
+      list = await dashboardRepository.all(null);
+
+      expect(list[0].name, 'Dashboard 3');
+      expect(list[1].name, 'Dashboard 1');
+      expect(list[2].name, 'Dashboard 2');
+
+      await dashboardRepository.delete(newDashboard.id);
+    });
+
     test('test dashboardRepository.delete().', () async {
       List<Dashboard> list = await dashboardRepository.all(null);
       expect(list.length, 2);
