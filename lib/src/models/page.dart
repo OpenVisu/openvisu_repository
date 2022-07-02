@@ -15,6 +15,8 @@
 
 import 'dart:core';
 
+import 'package:openvisu_repository/src/enums/page_type.dart';
+
 import 'chart_page.dart';
 import 'dashboard.dart';
 import 'iframe_page.dart';
@@ -27,15 +29,6 @@ import 'single_value.dart';
 import 'text_page.dart';
 
 import 'model.dart';
-
-enum PageType {
-  none,
-  text,
-  iframe,
-  image,
-  chart,
-  singleValue,
-}
 
 class Page extends Model<Page> {
   static const collection = 'page';
@@ -63,7 +56,7 @@ class Page extends Model<Page> {
 
   static PageContent parseChild(Map<String, dynamic> data) {
     if (!data.containsKey('child')) return NonePage.createDefault();
-    PageType pageType = chartTypeFromString(data['child_type']);
+    PageType pageType = PageType.fromString(data['child_type']);
     if (data['child'] == null) {
       return NonePage.createDefault();
     }
@@ -88,7 +81,7 @@ class Page extends Model<Page> {
       : name = data['name'],
         sort = data['sort'],
         dashboardId = Pk<Dashboard>(data['dashboard_id']),
-        pageType = chartTypeFromString(data['child_type']),
+        pageType = PageType.fromString(data['child_type']),
         childId = getChildModelKey(data['child_type'], data['child_id']),
         child = parseChild(data),
         super.fromJson(data);
@@ -108,7 +101,7 @@ class Page extends Model<Page> {
         if (name != null) 'name': name,
         if (sort != null) 'sort': sort,
         if (dashboardId != null) 'dashboard_id': dashboardId,
-        'child_type': _stringFromChartType(pageType),
+        'child_type': pageType.toString(),
         if (childId.isNotEmpty) 'child_id': childId,
       };
 
@@ -155,24 +148,7 @@ class Page extends Model<Page> {
   }
 
   String get type {
-    return _stringFromChartType(pageType);
-  }
-
-  static PageType chartTypeFromString(final String? s) {
-    switch (s) {
-      case 'text_page':
-        return PageType.text;
-      case 'iframe_page':
-        return PageType.iframe;
-      case 'image_page':
-        return PageType.image;
-      case 'chart_page':
-        return PageType.chart;
-      case 'single_value_page':
-        return PageType.singleValue;
-      default:
-        return PageType.none;
-    }
+    return pageType.toString();
   }
 
   static PageContentPk getChildModelKey(final String? s, final int childId) {
@@ -189,23 +165,6 @@ class Page extends Model<Page> {
         return PageContentPk<SingleValuePage>(childId);
       default:
         throw UnsupportedError('unknown chart type $s');
-    }
-  }
-
-  static String _stringFromChartType(final PageType chartType) {
-    switch (chartType) {
-      case PageType.text:
-        return 'text_page';
-      case PageType.iframe:
-        return 'iframe_page';
-      case PageType.image:
-        return 'image_page';
-      case PageType.chart:
-        return 'chart_page';
-      case PageType.singleValue:
-        return 'single_value_page';
-      case PageType.none:
-        return 'null';
     }
   }
 

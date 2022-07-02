@@ -13,8 +13,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export 'aggregation_function_type.dart';
-export 'chart_type.dart';
-export 'data_type.dart';
-export 'filter_type.dart';
-export 'page_type.dart';
+import 'package:openvisu_repository/openvisu_repository.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('Test toString and fromString methods', () {
+    for (final PageType original in PageType.values) {
+      PageType recreated = PageType.fromString(original.toString());
+      expect(original, recreated);
+    }
+
+    expect(PageType.fromString('not existing'), PageType.none);
+  });
+}
