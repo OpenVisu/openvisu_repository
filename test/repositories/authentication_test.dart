@@ -101,7 +101,7 @@ void main() {
       expect(authenticationRepository.isGuest(), true);
 
       bool can = authenticationRepository.can(
-        action: ActionType.read,
+        action: ActionType.view,
         subject: Dashboard.collection,
       );
 
@@ -112,7 +112,7 @@ void main() {
         saveLogin: false,
       );
       can = authenticationRepository.can(
-        action: ActionType.read,
+        action: ActionType.view,
         subject: Dashboard.collection,
       );
 

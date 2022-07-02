@@ -15,68 +15,38 @@
 
 import 'dart:core';
 
-import 'primary_key.dart';
-import 'user.dart';
-
-import 'model.dart';
-
-enum RightType { none, mine, all }
-
-enum ActionType { create, read, update, delete }
+import 'package:openvisu_repository/openvisu_repository.dart';
 
 class Permission extends Model<Permission> {
   final String name;
 
-  const Permission(
+  Permission(
     this.name,
-  ) : super(
-          const Pk<Permission>.newModel(),
-          const Pk<User>.empty(),
-          const Pk<User>.empty(),
-          0,
-          0,
-        );
+  ) : super.createDefault();
 
   @override
   Permission.fromJson(Map<String, dynamic> data)
       : name = data['name'],
         super.fromJson(data);
 
-  // TODO rename?
-  Permission.create(final ActionType actionType, final RightType rightType,
-      final String subject)
-      : name = generateName(actionType, rightType, subject),
+  Permission.create(
+    final ActionType actionType,
+    final RightType rightType,
+    final String subject,
+  )   : name = generateName(actionType, rightType, subject),
         super.createDefault();
 
   static String generateName(
-      ActionType actionType, RightType rightType, String subject) {
-    String action = '';
-    switch (actionType) {
-      case ActionType.create:
-        action = 'create';
-        break;
-      case ActionType.read:
-        action = 'view';
-        break;
-      case ActionType.update:
-        action = 'update';
-        break;
-      case ActionType.delete:
-        action = 'delete';
-        break;
-    }
+    ActionType actionType,
+    RightType rightType,
+    String subject,
+  ) {
+    String action = actionType.toString();
 
-    String right = '';
-    switch (rightType) {
-      case RightType.mine:
-        right = 'own';
-        break;
-      case RightType.all:
-        right = 'all';
-        break;
-      case RightType.none:
-        throw UnsupportedError('input not valid');
+    if (rightType == RightType.none) {
+      throw UnsupportedError('input not valid');
     }
+    String right = rightType.toString();
 
     return '$action:$right:$subject';
   }
@@ -89,29 +59,13 @@ class Permission extends Model<Permission> {
   ActionType? get actionType {
     if (name.split(':').length != 3) return null;
     final List<String> l = name.split(':');
-    switch (l[0]) {
-      case 'create':
-        return ActionType.create;
-      case 'view':
-        return ActionType.read;
-      case 'update':
-        return ActionType.update;
-      case 'delete':
-        return ActionType.delete;
-    }
-    return null;
+    return ActionType.fromString(l[0]);
   }
 
   RightType? get rightType {
     if (name.split(':').length != 3) return RightType.none;
     final List<String> l = name.split(':');
-    switch (l[1]) {
-      case 'own':
-        return RightType.mine;
-      case 'all':
-        return RightType.all;
-    }
-    return RightType.none;
+    return RightType.fromString(l[1]);
   }
 
   String? get subject {
@@ -126,23 +80,19 @@ class Permission extends Model<Permission> {
     switch (actionType) {
       case ActionType.create:
         return this.actionType == ActionType.create;
-      case ActionType.read:
-        return this.actionType == ActionType.read &&
+      case ActionType.view:
+        return this.actionType == ActionType.view &&
                 rightType == RightType.all ||
-            (owner && rightType == RightType.mine);
+            (owner && rightType == RightType.own);
       case ActionType.update:
         return this.actionType == ActionType.update &&
                 rightType == RightType.all ||
-            (owner && rightType == RightType.mine);
+            (owner && rightType == RightType.own);
       case ActionType.delete:
         return this.actionType == ActionType.delete &&
                 rightType == RightType.all ||
-            (owner && rightType == RightType.mine);
+            (owner && rightType == RightType.own);
     }
-  }
-
-  static String stringFromRightType(final RightType rightType) {
-    return rightType.toString().split('.').last;
   }
 
   @override

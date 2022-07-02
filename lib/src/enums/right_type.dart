@@ -13,10 +13,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export 'aggregation_function_type.dart';
-export 'chart_type.dart';
-export 'data_type.dart';
-export 'filter_type.dart';
-export 'page_type.dart';
-export 'action_type.dart';
-export 'right_type.dart';
+enum RightType {
+  none,
+  own,
+  all;
+
+  static RightType fromString(final String s) {
+    switch (s) {
+      case 'own':
+        return RightType.own;
+      case 'all':
+        return RightType.all;
+    }
+    return RightType.none;
+  }
+
+  @override
+  String toString() {
+    return name;
+  }
+}
