@@ -96,6 +96,29 @@ void main() {
       expect(authenticationRepository.isGuest(), true);
     });
 
+    test('test can()', () async {
+      expect(authenticationRepository.hasOpenSession(), true);
+      expect(authenticationRepository.isGuest(), true);
+
+      bool can = authenticationRepository.can(
+        action: ActionType.read,
+        subject: Dashboard.collection,
+      );
+
+      expect(can, false);
+
+      await authenticationRepository.authenticate(
+        credentials: credentialsAdmin,
+        saveLogin: false,
+      );
+      can = authenticationRepository.can(
+        action: ActionType.read,
+        subject: Dashboard.collection,
+      );
+
+      expect(can, true);
+    });
+
     test('test authentication.isAdmin().', () async {
       await authenticationRepository.authenticate(
         credentials: credentialsAdmin,
