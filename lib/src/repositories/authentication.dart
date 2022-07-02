@@ -117,7 +117,7 @@ class AuthenticationRepository {
             'Authorization': 'Bearer $tokenString',
           },
         ).timeout(httpTimeOut);
-        if (response.statusCode != 200) {
+        if (response.statusCode != HttpStatus.ok) {
           log.severe('Failed to logout from server at: $serverUrl. '
               'Status Code: ${response.statusCode}');
         }
