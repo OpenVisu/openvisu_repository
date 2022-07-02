@@ -67,7 +67,6 @@ abstract class CrudRepository<T extends Model<T>> extends BaseRepository
     }
   }
 
-  // TODO test pagination
   Future<List<T>> paginated({
     List<Filter> filter = const [],
     pageCount = 0,
