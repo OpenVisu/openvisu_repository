@@ -31,6 +31,19 @@ class MeasurementsRepository {
     _cache[timeSerialId] = measurements;
   }
 
+  bool hasCachedData(
+    final List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    for (final Pk<TimeSerial> timeSerialId in timeSerialIds) {
+      if (!hasCachedDataForTimeSerial(timeSerialId, start, stop)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   bool hasCachedDataForTimeSerial(
     final Pk<TimeSerial> timeSerialId,
     final DateTime start,
@@ -51,6 +64,19 @@ class MeasurementsRepository {
       return false;
     }
     return true;
+  }
+
+  bool requiresLoad(
+    final List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    for (final Pk<TimeSerial> timeSerialId in timeSerialIds) {
+      if (requiresLoadForTimeSerial(timeSerialId, start, stop)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   bool requiresLoadForTimeSerial(
