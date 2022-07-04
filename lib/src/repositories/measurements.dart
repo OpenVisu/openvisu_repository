@@ -130,6 +130,21 @@ class MeasurementsRepository {
     };
   }
 
+  Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> loadMultiple(
+    final Pk<ChartPage> chartPageId,
+    final List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) async {
+    Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> t =
+        await InfluxdbRepository.get(chartPageId, start, stop);
+    for (MapEntry<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> e
+        in t.entries) {
+      cache(e.key, e.value);
+    }
+    return getMultipleCached(timeSerialIds, start, stop);
+  }
+
   void sideload(final Pk<TimeSerial> id, List<dynamic> data) {
     final List<TimeSeriesEntry<double?>> measurements = data
         .map((e) => TimeSeriesEntry.fromJson(DataType.Double, e)
