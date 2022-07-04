@@ -25,8 +25,8 @@ class MeasurementsRepository {
   MeasurementsRepository({required this.timeSeriesEntryRepository});
 
   void cache(
-    Pk<TimeSerial> timeSerialId,
-    List<TimeSeriesEntry<double?>> measurements,
+    final Pk<TimeSerial> timeSerialId,
+    final List<TimeSeriesEntry<double?>> measurements,
   ) {
     _cache[timeSerialId] = measurements;
   }
@@ -114,7 +114,7 @@ class MeasurementsRepository {
   }
 
   Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> getMultipleCached(
-    List<Pk<TimeSerial>> timeSerialIds,
+    final List<Pk<TimeSerial>> timeSerialIds,
     final DateTime start,
     final DateTime stop,
   ) {
