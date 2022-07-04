@@ -52,6 +52,28 @@ class MeasurementsRepository {
     }
     return true;
   }
+
+  bool requiresLoadForTimeSerial(
+    final Pk<TimeSerial> timeSerialId,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    if (!hasCachedDataForTimeSerial(timeSerialId, start, stop)) {
+      return true;
+    }
+
+    final Duration cachedResolution =
+        _cache[timeSerialId]![1].time.difference(_cache[timeSerialId]![0].time);
+    final Duration expectedResolution =
+        getTimeFrameResolution(stop.difference(start));
+
+    if (cachedResolution != expectedResolution) {
+      return true;
+    }
+
+    return false;
+  }
+
   List<TimeSeriesEntry<double?>> getCached(
     Pk<TimeSerial> timeSerialId,
     final DateTime start,

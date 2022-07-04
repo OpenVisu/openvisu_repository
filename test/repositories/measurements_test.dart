@@ -116,5 +116,34 @@ void main() {
         false,
       );
     });
+
+    test('test requiresLoadForTimeSerial()', () {
+      expect(
+        measurementsRepository.requiresLoadForTimeSerial(
+          timeSerialId,
+          measurements.first.time,
+          measurements.last.time,
+        ),
+        false,
+      );
+
+      expect(
+        measurementsRepository.requiresLoadForTimeSerial(
+          timeSerialId,
+          measurements.first.time,
+          measurements[1].time,
+        ),
+        true,
+      );
+
+      expect(
+        measurementsRepository.requiresLoadForTimeSerial(
+          timeSerialId,
+          measurements.first.time,
+          measurements.last.time.add(const Duration(seconds: 5)),
+        ),
+        true,
+      );
+    });
   });
 }
