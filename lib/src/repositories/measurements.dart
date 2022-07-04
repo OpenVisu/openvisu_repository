@@ -101,7 +101,7 @@ class MeasurementsRepository {
   }
 
   List<TimeSeriesEntry<double?>> getCached(
-    Pk<TimeSerial> timeSerialId,
+    final Pk<TimeSerial> timeSerialId,
     final DateTime start,
     final DateTime stop,
   ) {
