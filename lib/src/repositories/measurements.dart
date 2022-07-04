@@ -31,6 +31,27 @@ class MeasurementsRepository {
     _cache[timeSerialId] = measurements;
   }
 
+  bool hasCachedDataForTimeSerial(
+    final Pk<TimeSerial> timeSerialId,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    assert(start.isBefore(stop));
+
+    if (!_cache.containsKey(timeSerialId)) {
+      return false;
+    }
+    if (_cache[timeSerialId]!.length < 2) {
+      return false;
+    }
+    if (start.isBefore(_cache[timeSerialId]!.first.time)) {
+      return false;
+    }
+    if (stop.isAfter(_cache[timeSerialId]!.last.time)) {
+      return false;
+    }
+    return true;
+  }
   List<TimeSeriesEntry<double?>> getCached(
     Pk<TimeSerial> timeSerialId,
     final DateTime start,

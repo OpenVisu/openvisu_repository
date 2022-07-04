@@ -69,5 +69,52 @@ void main() {
         measurementsHalfFromCache,
       );
     });
+
+    test('test hasCachedDataForTimeSerial()', () {
+      expect(
+        measurementsRepository.hasCachedDataForTimeSerial(
+          timeSerialId,
+          measurements.first.time,
+          measurements.last.time,
+        ),
+        true,
+      );
+
+      expect(
+        measurementsRepository.hasCachedDataForTimeSerial(
+          timeSerialId,
+          measurements[5].time,
+          measurements[10].time,
+        ),
+        true,
+      );
+
+      expect(
+        measurementsRepository.hasCachedDataForTimeSerial(
+          timeSerialId,
+          measurements[5].time.subtract(const Duration(seconds: 5)),
+          measurements[10].time,
+        ),
+        true,
+      );
+
+      expect(
+        measurementsRepository.hasCachedDataForTimeSerial(
+          timeSerialId,
+          measurements.first.time.subtract(const Duration(seconds: 5)),
+          measurements[10].time,
+        ),
+        false,
+      );
+
+      expect(
+        measurementsRepository.hasCachedDataForTimeSerial(
+          timeSerialId,
+          measurements.first.time,
+          measurements.last.time.add(const Duration(seconds: 5)),
+        ),
+        false,
+      );
+    });
   });
 }
