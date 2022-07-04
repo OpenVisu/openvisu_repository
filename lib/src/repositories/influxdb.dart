@@ -23,7 +23,7 @@ import 'package:universal_html/html.dart' as html;
 class InfluxdbRepository {
   static final log = Logger('repository/InfluxdbRepository');
 
-  static Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry>>> get(
+  static Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> get(
     final Pk<ChartPage> chartPageId,
     final DateTime? from,
     DateTime? to,
@@ -47,10 +47,10 @@ class InfluxdbRepository {
     if (response.statusCode != html.HttpStatus.ok) {
       // TODO handle error
       log.severe('could not load data');
-      return <Pk<TimeSerial>, List<TimeSeriesEntry>>{};
+      return <Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>{};
     }
 
-    Map<Pk<TimeSerial>, List<TimeSeriesEntry>> result = {};
+    Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> result = {};
     dynamic jsonDecoded = json.decode(response.body);
     if (jsonDecoded is List<dynamic>) {
       return result;
@@ -58,13 +58,13 @@ class InfluxdbRepository {
     (jsonDecoded as Map<dynamic, dynamic>).forEach((key, value) {
       final Pk<TimeSerial> id = Pk<TimeSerial>(int.parse(key));
 
-      final List<TimeSeriesEntry> measurements =
+      final List<TimeSeriesEntry<double?>> measurements =
           (value as List<dynamic>).map((i) {
-        TimeSeriesEntry timeSeriesEntry = TimeSeriesEntry.fromDataType(
+        TimeSeriesEntry<double?> timeSeriesEntry = TimeSeriesEntry.fromDataType(
           DataType.Double, // TODO return data type from server
           DateTime.fromMillisecondsSinceEpoch(i['timestamp'] * 1000),
           i['value'],
-        );
+        ) as TimeSeriesEntry<double?>;
         return timeSeriesEntry;
       }).toList();
       result[id] = measurements;
