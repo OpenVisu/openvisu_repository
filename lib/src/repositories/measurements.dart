@@ -138,4 +138,25 @@ class MeasurementsRepository {
       measurements.last,
     ); // TODO test if last is always the newest
   }
+
+  // must match backend/modules/dashboard/models/TimeSerial->getEveryInSeconds()
+  Duration getTimeFrameResolution(final Duration $timeframe) {
+    if ($timeframe < const Duration(minutes: 1)) {
+      return const Duration(seconds: 1);
+    } else if ($timeframe < const Duration(minutes: 15)) {
+      return const Duration(seconds: 10);
+    } else if ($timeframe < const Duration(hours: 1)) {
+      return const Duration(minutes: 1);
+    } else if ($timeframe < const Duration(hours: 8)) {
+      return const Duration(minutes: 10);
+    } else if ($timeframe < const Duration(days: 3)) {
+      return const Duration(hours: 1);
+    } else if ($timeframe < const Duration(days: 7)) {
+      return const Duration(hours: 2);
+    } else if ($timeframe < const Duration(days: 90)) {
+      return const Duration(days: 1);
+    } else {
+      return const Duration(days: 7);
+    }
+  }
 }
