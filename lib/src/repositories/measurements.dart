@@ -119,10 +119,14 @@ class MeasurementsRepository {
     final DateTime stop,
   ) {
     return {
-      for (Pk<TimeSerial> id in timeSerialIds)
-        id: _cache[id]!
-            .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
-            .toList(),
+      for (Pk<TimeSerial> id in timeSerialIds) ...{
+        if (_cache.containsKey(id))
+          id: _cache[id]!
+              .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
+              .toList(),
+        if (!_cache.containsKey(id)) //
+          id: [],
+      }
     };
   }
 
