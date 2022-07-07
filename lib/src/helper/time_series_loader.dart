@@ -1,0 +1,128 @@
+// Copyright (C) 2022 Robin Jespersen
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import 'dart:async';
+
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:openvisu_repository/openvisu_repository.dart';
+import 'package:openvisu_repository/src/helper/step_size.dart';
+
+class TimeSeriesLoader {
+  // map of active futures
+  // the key contains the parameters of the query
+  @visibleForTesting
+  final Map<Query, Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>>>
+      futures = {};
+
+  // if there is a future matching the query, it is returned
+  // otherwise a new query is started and its future returned
+  Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> load(
+    final Pk<ChartPage> chartPageId,
+    final List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    Iterable<Query> queries =
+        futures.keys.where(_covers(chartPageId, start, stop));
+    if (queries.isNotEmpty) {
+      return futures[queries.first]!;
+    }
+
+    final Query query = Query(chartPageId, start, stop);
+
+    // ignore all running queries that are covered by the new one
+    for (Query q in [...futures.keys]) {
+      if (_covers(q.chartPageId, q.start, q.stop)(query)) {
+        futures[q]!.ignore();
+        futures.remove(q);
+      }
+    }
+
+    futures[query] = doLoad(chartPageId, timeSerialIds, start, stop) //
+        .then(_cleanUp(query));
+
+    return futures[query]!;
+  }
+
+  // if a future completes, it is removed from the list of active futures
+  FutureOr<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> Function(
+    Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>,
+  ) _cleanUp(
+    final Query query,
+  ) {
+    return (Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> value) {
+      futures.remove(query);
+      return value;
+    };
+  }
+
+  // returns a function that returns true, if an exising query covers
+  // the new query
+  bool Function(Query q) _covers(
+    final Pk<ChartPage> chartPageId,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    return (Query q) {
+      if (q.chartPageId != chartPageId) {
+        return false;
+      }
+      if (q.stepSize != StepSize.fromStartStop(start, stop)) {
+        return false;
+      }
+      if (start.isBefore(q.start)) {
+        return false;
+      }
+      if (stop.isAfter(q.stop)) {
+        return false;
+      }
+      return true;
+    };
+  }
+
+  @visibleForTesting
+  Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> doLoad(
+    final Pk<ChartPage> chartPageId,
+    final List<Pk<TimeSerial>> timeSerialIds,
+    final DateTime start,
+    final DateTime stop,
+  ) async {
+    Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> t =
+        await InfluxdbRepository.get(chartPageId, start, stop);
+    return {
+      for (MapEntry<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> e
+          in t.entries)
+        e.key: e.value,
+    };
+  }
+}
+
+@visibleForTesting
+class Query extends Equatable {
+  final Pk<ChartPage> chartPageId;
+  final DateTime start;
+  final DateTime stop;
+  final StepSize stepSize;
+
+  Query(
+    this.chartPageId,
+    this.start,
+    this.stop,
+  ) : stepSize = StepSize.fromStartStop(start, stop);
+
+  @override
+  List<Object?> get props => [chartPageId, start, stop, stepSize];
+}
