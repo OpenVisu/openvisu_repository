@@ -38,6 +38,16 @@ void main() {
       expect(stepSize.delta, const Duration(minutes: 1));
     });
 
+    test('test ==', () {
+      final StepSize stepSize1 = StepSize.fromStartStop(before20minutes, now);
+      //final StepSize stepSize2 = StepSize.fromStartStop(before20minutes, now);
+      final StepSize stepSize2 = StepSize.fromTimeFrame(
+        now.difference(before20minutes),
+      );
+      expect(stepSize1.delta == stepSize2.delta, true);
+      expect(stepSize1 == stepSize2, true);
+    });
+
     test('test fromDelta()', () {
       final StepSize stepSize = StepSize.fromDelta(
         const Duration(minutes: 1),
@@ -52,6 +62,51 @@ void main() {
         ),
         throwsA(isA<FormatException>()),
       );
+    });
+
+    test('test zoomIn()', () {
+      StepSize? stepSize = StepSize.fromDelta(
+        const Duration(days: 7),
+      );
+      expect(stepSize.delta, const Duration(days: 7));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(days: 1));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(hours: 2));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(hours: 1));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(minutes: 10));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(minutes: 1));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(seconds: 10));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize!.delta, const Duration(seconds: 1));
+      stepSize = stepSize.zoomIn();
+      expect(stepSize, null);
+    });
+    test('test zoomOut()', () {
+      StepSize? stepSize = StepSize.fromDelta(
+        const Duration(seconds: 1),
+      );
+      expect(stepSize.delta, const Duration(seconds: 1));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(seconds: 10));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(minutes: 1));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(minutes: 10));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(hours: 1));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(hours: 2));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(days: 1));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize!.delta, const Duration(days: 7));
+      stepSize = stepSize.zoomOut();
+      expect(stepSize, null);
     });
   });
 }

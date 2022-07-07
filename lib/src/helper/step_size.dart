@@ -13,11 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-
-class StepSize implements Equatable {
-  @visibleForTesting
+class StepSize {
   final Duration delta;
 
   StepSize.fromStartStop(
@@ -32,10 +28,24 @@ class StepSize implements Equatable {
   const StepSize._fromDelta(this.delta);
 
   factory StepSize.fromDelta(final Duration d) {
-    if (!StepSize._validResolutions.contains(d)) {
+    if (!StepSize._validResolutions.contains(StepSize._fromDelta(d))) {
       throw const FormatException('invalid stepSize');
     }
     return StepSize._fromDelta(d);
+  }
+
+  StepSize? zoomIn() {
+    if (this == _validResolutions.first) {
+      return null;
+    }
+    return _validResolutions.lastWhere((s) => s.delta < delta);
+  }
+
+  StepSize? zoomOut() {
+    if (this == _validResolutions.last) {
+      return null;
+    }
+    return _validResolutions.firstWhere((s) => s.delta > delta);
   }
 
   // must match backend/modules/dashboard/models/TimeSerial->getEveryInSeconds()
@@ -61,20 +71,38 @@ class StepSize implements Equatable {
     }
   }
 
-  static const List<Duration> _validResolutions = [
-    Duration(seconds: 1),
-    Duration(seconds: 10),
-    Duration(minutes: 1),
-    Duration(minutes: 10),
-    Duration(hours: 1),
-    Duration(hours: 2),
-    Duration(days: 1),
-    Duration(days: 7)
+  // list must be sorted
+  static const List<StepSize> _validResolutions = [
+    StepSize._fromDelta(Duration(seconds: 1)),
+    StepSize._fromDelta(Duration(seconds: 10)),
+    StepSize._fromDelta(Duration(minutes: 1)),
+    StepSize._fromDelta(Duration(minutes: 10)),
+    StepSize._fromDelta(Duration(hours: 1)),
+    StepSize._fromDelta(Duration(hours: 2)),
+    StepSize._fromDelta(Duration(days: 1)),
+    StepSize._fromDelta(Duration(days: 7))
   ];
 
+  /// Whether this [StepSize] is smaller than [other].
+  bool operator <(StepSize other) => delta < other.delta;
+
+  /// Whether this [StepSize] is bigger than [other].
+  bool operator >(StepSize other) => delta > other.delta;
+
+  /// Whether this [StepSize] is smaller than or equal to [other].
+  bool operator <=(StepSize other) => delta <= other.delta;
+
+  /// Whether this [Duration] is bigger than or equal to [other].
+  bool operator >=(StepSize other) => delta >= other.delta;
+
+  /// Whether this [StepSize] has the same size as [other].
   @override
-  List<Object?> get props => [delta];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StepSize &&
+          runtimeType == other.runtimeType &&
+          delta == other.delta;
 
   @override
-  bool? get stringify => true;
+  int get hashCode => delta.hashCode;
 }
