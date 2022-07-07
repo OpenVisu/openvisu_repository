@@ -19,3 +19,4 @@ export 'src/models/models.dart';
 export 'src/repositories/repositories.dart';
 export 'src/enums/enums.dart';
 export 'src/exception/exceptions.dart';
+export 'src/helper/export.dart';
