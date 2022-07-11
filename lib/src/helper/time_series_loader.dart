@@ -78,21 +78,22 @@ class TimeSeriesLoader {
     };
   }
 
+  // align the time with the stepSize
+  DateTime _round(final DateTime time, StepSize stepSize) {
+    return DateTime.fromMillisecondsSinceEpoch(
+      (time.millisecondsSinceEpoch ~/ stepSize.delta.inMilliseconds) *
+          stepSize.delta.inMilliseconds,
+    );
+  }
+
   @visibleForTesting
   OptimizedStartStop optimizeStartStop(
     DateTime start,
     DateTime stop,
   ) {
-    // align start stop with stepSize
     final StepSize stepSize = StepSize.fromStartStop(start, stop);
-    start = DateTime.fromMillisecondsSinceEpoch(
-      (start.millisecondsSinceEpoch ~/ stepSize.delta.inMilliseconds) *
-          stepSize.delta.inMilliseconds,
-    );
-    stop = DateTime.fromMillisecondsSinceEpoch(
-      (stop.millisecondsSinceEpoch ~/ stepSize.delta.inMilliseconds) *
-          stepSize.delta.inMilliseconds,
-    );
+    start = _round(start, stepSize);
+    stop = _round(stop, stepSize);
 
     // if nothing in cache, return
     if (!cache.cache.containsKey(stepSize)) {
