@@ -15,135 +15,12 @@
 
 import 'package:openvisu_repository/openvisu_repository.dart';
 
-/// Repository to handle the data needed by the ViewWindowOnMeasurementsCubit
-/// currently the values need to be sideloaded
+/// Repository keeps a global timeSeriesCache
 class MeasurementsRepository {
   final TimeSeriesEntryRepository timeSeriesEntryRepository;
-
-  final Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> _cache = {};
+  final TimeSeriesCache timeSeriesCache = TimeSeriesCache();
 
   MeasurementsRepository({required this.timeSeriesEntryRepository});
-
-  void cache(
-    final Pk<TimeSerial> timeSerialId,
-    final List<TimeSeriesEntry<double?>> measurements,
-  ) {
-    _cache[timeSerialId] = measurements;
-  }
-
-  bool hasCachedData(
-    final List<Pk<TimeSerial>> timeSerialIds,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    for (final Pk<TimeSerial> timeSerialId in timeSerialIds) {
-      if (!hasCachedDataForTimeSerial(timeSerialId, start, stop)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool hasCachedDataForTimeSerial(
-    final Pk<TimeSerial> timeSerialId,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    assert(start.isBefore(stop));
-
-    if (!_cache.containsKey(timeSerialId)) {
-      return false;
-    }
-    if (_cache[timeSerialId]!.length < 2) {
-      return false;
-    }
-    if (start.isBefore(_cache[timeSerialId]!.first.time)) {
-      return false;
-    }
-    if (stop.isAfter(_cache[timeSerialId]!.last.time)) {
-      return false;
-    }
-    return true;
-  }
-
-  bool requiresLoad(
-    final List<Pk<TimeSerial>> timeSerialIds,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    for (final Pk<TimeSerial> timeSerialId in timeSerialIds) {
-      if (requiresLoadForTimeSerial(timeSerialId, start, stop)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool requiresLoadForTimeSerial(
-    final Pk<TimeSerial> timeSerialId,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    if (!hasCachedDataForTimeSerial(timeSerialId, start, stop)) {
-      return true;
-    }
-
-    final Duration cachedResolution =
-        _cache[timeSerialId]![1].time.difference(_cache[timeSerialId]![0].time);
-    final Duration expectedResolution =
-        getTimeFrameResolution(stop.difference(start));
-
-    if (cachedResolution != expectedResolution) {
-      return true;
-    }
-
-    return false;
-  }
-
-  List<TimeSeriesEntry<double?>> getCached(
-    final Pk<TimeSerial> timeSerialId,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    if (_cache.containsKey(timeSerialId)) {
-      return _cache[timeSerialId]!
-          .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
-          .toList();
-    }
-    return [];
-  }
-
-  Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> getMultipleCached(
-    final List<Pk<TimeSerial>> timeSerialIds,
-    final DateTime start,
-    final DateTime stop,
-  ) {
-    return {
-      for (Pk<TimeSerial> id in timeSerialIds) ...{
-        if (_cache.containsKey(id))
-          id: _cache[id]!
-              .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
-              .toList(),
-        if (!_cache.containsKey(id)) //
-          id: [],
-      }
-    };
-  }
-
-  Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> loadMultiple(
-    final Pk<ChartPage> chartPageId,
-    final List<Pk<TimeSerial>> timeSerialIds,
-    final DateTime start,
-    final DateTime stop,
-  ) async {
-    Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> t =
-        await InfluxdbRepository.get(chartPageId, start, stop);
-    for (MapEntry<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> e
-        in t.entries) {
-      cache(e.key, e.value);
-    }
-    return getMultipleCached(timeSerialIds, start, stop);
-  }
 
   void sideload(final Pk<TimeSerial> id, List<dynamic> data) {
     final List<TimeSeriesEntry<double?>> measurements = data
@@ -151,31 +28,16 @@ class MeasurementsRepository {
             as TimeSeriesEntry<double?>)
         .toList();
 
-    cache(id, measurements);
-    timeSeriesEntryRepository.cacheLast(
-      id,
-      measurements.last,
-    ); // TODO test if last is always the newest
-  }
-
-  // must match backend/modules/dashboard/models/TimeSerial->getEveryInSeconds()
-  Duration getTimeFrameResolution(final Duration $timeframe) {
-    if ($timeframe < const Duration(minutes: 1)) {
-      return const Duration(seconds: 1);
-    } else if ($timeframe < const Duration(minutes: 15)) {
-      return const Duration(seconds: 10);
-    } else if ($timeframe < const Duration(hours: 1)) {
-      return const Duration(minutes: 1);
-    } else if ($timeframe < const Duration(hours: 8)) {
-      return const Duration(minutes: 10);
-    } else if ($timeframe < const Duration(days: 3)) {
-      return const Duration(hours: 1);
-    } else if ($timeframe < const Duration(days: 7)) {
-      return const Duration(hours: 2);
-    } else if ($timeframe < const Duration(days: 90)) {
-      return const Duration(days: 1);
+    if (measurements.length >= 2) {
+      final stepSize = StepSize.fromDelta(
+          measurements[1].time.difference(measurements[0].time));
+      timeSeriesCache.set(id, measurements, stepSize);
+      timeSeriesEntryRepository.cacheLast(
+        id,
+        measurements.last,
+      ); // TODO test if last is always the newest
     } else {
-      return const Duration(days: 7);
+      throw ArgumentError('measurements list too short');
     }
   }
 }
