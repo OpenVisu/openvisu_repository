@@ -132,8 +132,8 @@ class TimeSeriesCache {
     final Pk<TimeSerial> timeSerialId,
     final DateTime start,
     final DateTime stop,
+    final StepSize stepSize,
   ) {
-    final StepSize stepSize = StepSize.fromStartStop(start, stop);
     if (!cache.containsKey(stepSize)) {
       return [];
     }
@@ -149,10 +149,11 @@ class TimeSeriesCache {
     final List<Pk<TimeSerial>> timeSerialIds,
     final DateTime start,
     final DateTime stop,
+    final StepSize stepSize,
   ) {
     return {
       for (var timeSerialId in timeSerialIds)
-        timeSerialId: get(timeSerialId, start, stop),
+        timeSerialId: get(timeSerialId, start, stop, stepSize),
     };
   }
 

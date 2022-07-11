@@ -57,7 +57,7 @@ class TimeSeriesLoader {
       }
     }
 
-    futures[query] = doLoad(chartPageId, timeSerialIds, start, stop) //
+    futures[query] = doLoad(chartPageId, timeSerialIds, start, stop, stepSize)
         .then(_cleanUp(query, stepSize));
 
     return futures[query]!;
@@ -107,10 +107,9 @@ class TimeSeriesLoader {
       return OptimizedStartStop(start, stop);
     }
 
-    // TODO double width
+    Duration delta = stepSize.recomendedQueryWidth();
 
     // test for overlaps
-    final Duration delta = stop.difference(start);
     final bool containsStop = cache.containsTime(stepSize, stop);
     final bool containsStart = cache.containsTime(stepSize, start);
     if (containsStart && containsStop) {
@@ -120,13 +119,12 @@ class TimeSeriesLoader {
       }
       throw ArgumentError('query is covered by cache');
     }
-    if (containsStop) {
+    } else if (containsStop) {
       stop = list.first.time.subtract(
         stepSize.delta,
       ); // stop time is not included in query result
       start = stop.subtract(delta);
-    }
-    if (containsStart) {
+    } else if (containsStart) {
       start = list.last.time; // start time is not included in query result
       stop = start.add(delta);
     }
@@ -163,9 +161,10 @@ class TimeSeriesLoader {
     final List<Pk<TimeSerial>> timeSerialIds,
     final DateTime start,
     final DateTime stop,
+    final StepSize stepSize,
   ) async {
     Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> t =
-        await InfluxdbRepository.get(chartPageId, start, stop);
+        await InfluxdbRepository.get(chartPageId, start, stop, stepSize);
     return {
       for (MapEntry<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> e
           in t.entries)

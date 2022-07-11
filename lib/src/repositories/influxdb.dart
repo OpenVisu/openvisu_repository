@@ -29,13 +29,14 @@ class InfluxdbRepository {
     final Pk<ChartPage> chartPageId,
     final DateTime? from,
     DateTime? to,
+    final StepSize stepSize,
   ) async {
     if (from == null && to == null) {
       to = DateTime.now();
     }
 
     String url = "${AuthenticationRepository.serverUrl}/api/"
-        "dashboard/chart-page/time-serial-data?id=$chartPageId";
+        "dashboard/chart-page/time-serial-data?id=$chartPageId&stepSize=${stepSize.delta.inSeconds}";
     if (to != null) {
       final int toSeconds = (to.millisecondsSinceEpoch / 1000).round();
       url += "&to=$toSeconds";
