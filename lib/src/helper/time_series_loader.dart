@@ -35,9 +35,8 @@ class TimeSeriesLoader {
     final List<Pk<TimeSerial>> timeSerialIds,
     DateTime start,
     DateTime stop,
+    final StepSize stepSize,
   ) {
-    final StepSize stepSize = StepSize.fromStartStop(start, stop);
-
     OptimizedStartStop oss = optimizeStartStop(start, stop);
     start = oss.start;
     stop = oss.stop;

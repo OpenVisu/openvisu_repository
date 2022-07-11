@@ -91,14 +91,18 @@ void main() {
     test('test set() dedublication', () {
       final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
       expect(
-        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        timeSeriesCache
+            .get(tiemSerialId1, before40minutes, now, stepSize)
+            .length,
         21,
       );
 
       timeSeriesCache.set(tiemSerialId1, measurements20minutes, stepSize);
 
       expect(
-        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        timeSeriesCache
+            .get(tiemSerialId1, before40minutes, now, stepSize)
+            .length,
         21,
       );
 
@@ -106,19 +110,24 @@ void main() {
           tiemSerialId1, measurements20minutesDifferent, stepSize);
 
       expect(
-        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        timeSeriesCache
+            .get(tiemSerialId1, before40minutes, now, stepSize)
+            .length,
         41,
       );
 
       timeSeriesCache.set(tiemSerialId1, measurements20inBetween, stepSize);
 
       expect(
-        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        timeSeriesCache
+            .get(tiemSerialId1, before40minutes, now, stepSize)
+            .length,
         41,
       );
     });
 
     test('test get()', () {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
       expect(
         timeSeriesCache.exists(tiemSerialId1, before20minutes, now),
         true,
@@ -128,6 +137,7 @@ void main() {
         tiemSerialId1,
         before20minutes,
         now,
+        stepSize,
       );
       expect(list.length, measurements20minutes.length);
 
@@ -136,6 +146,7 @@ void main() {
         [tiemSerialId1],
         before20minutes,
         now,
+        stepSize,
       );
       expect(map[tiemSerialId1]!.length, measurements20minutes.length);
     });

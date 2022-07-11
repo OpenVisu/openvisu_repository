@@ -70,12 +70,15 @@ void main() {
     });
 
     test('test load() sync', () {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+
       Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> r1 =
           timeSeriesLoader.load(
         chartPageId,
         timeSerialIds,
         before20minutes,
         now,
+        stepSize,
       );
       Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> r2 =
           timeSeriesLoader.load(
@@ -83,6 +86,7 @@ void main() {
         timeSerialIds,
         before20minutes,
         now,
+        stepSize,
       );
       expect(r1 == r2, true);
 
@@ -92,6 +96,7 @@ void main() {
         timeSerialIds,
         now.subtract(const Duration(minutes: 16)),
         now,
+        stepSize,
       );
       expect(r1 == r3, true);
       expect(timeSeriesLoader.futures.length, 1);
@@ -102,6 +107,7 @@ void main() {
         timeSerialIds,
         now.subtract(const Duration(minutes: 10)),
         now,
+        stepSize,
       );
       expect(r1 == r4, false);
 
@@ -111,6 +117,7 @@ void main() {
         timeSerialIds,
         now.subtract(const Duration(minutes: 11)),
         now,
+        stepSize,
       );
       expect(r4 == r5, false);
 
@@ -118,12 +125,14 @@ void main() {
     });
 
     test('test load() async', () async {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
       Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> r1 =
           timeSeriesLoader.load(
         chartPageId,
         timeSerialIds,
         before20minutes,
         now,
+        stepSize,
       );
       await r1;
       Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> r2 =
@@ -132,6 +141,7 @@ void main() {
         timeSerialIds,
         before20minutes,
         now,
+        stepSize,
       );
       expect(r1 == r2, false);
     });
@@ -173,6 +183,7 @@ void main() {
         timeSerialId1,
         now.subtract(const Duration(hours: 1)),
         now,
+        stepSize,
       );
       expect(data.length, 21);
       expect(data.first.time, now.subtract(const Duration(minutes: 40)));
@@ -197,6 +208,7 @@ void main() {
         timeSerialId1,
         now.subtract(const Duration(hours: 1)),
         now,
+        stepSize,
       );
       expect(data.length, 21);
       expect(data.first.time, now.subtract(const Duration(minutes: 40)));

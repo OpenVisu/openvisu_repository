@@ -48,6 +48,26 @@ class StepSize {
     return _validResolutions.firstWhere((s) => s.delta > delta);
   }
 
+  Duration recomendedQueryWidth() {
+    if (delta == const Duration(seconds: 1)) {
+      return const Duration(minutes: 1);
+    } else if (delta == const Duration(seconds: 10)) {
+      return const Duration(minutes: 15);
+    } else if (delta == const Duration(minutes: 1)) {
+      return const Duration(hours: 1);
+    } else if (delta == const Duration(minutes: 10)) {
+      return const Duration(hours: 1);
+    } else if (delta == const Duration(hours: 1)) {
+      return const Duration(days: 3);
+    } else if (delta == const Duration(hours: 2)) {
+      return const Duration(days: 7);
+    } else if (delta == const Duration(days: 1)) {
+      return const Duration(days: 90);
+    } else {
+      return const Duration(days: 90);
+    }
+  }
+
   // must match backend/modules/dashboard/models/TimeSerial->getEveryInSeconds()
   static Duration _getTimeFrameResolution(
     final Duration timeframe,
