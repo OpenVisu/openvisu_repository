@@ -48,7 +48,7 @@ class TimeSeriesCache {
             cache[stepSize]![timeSerialId]!.remove(e);
             cache[stepSize]![timeSerialId]!.add(m);
           } else {
-            throw AssertionError('no value should be added twice to the cache');
+          }
         }
       }
     }
