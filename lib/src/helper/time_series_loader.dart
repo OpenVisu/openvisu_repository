@@ -117,8 +117,6 @@ class TimeSeriesLoader {
         final GapStartStop gss = cache.getGapStartStop(stepSize, start, stop);
         return OptimizedStartStop(gss.start, gss.stop);
       }
-      throw ArgumentError('query is covered by cache');
-    }
     } else if (containsStop) {
       stop = list.first.time.subtract(
         stepSize.delta,
