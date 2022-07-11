@@ -105,4 +105,9 @@ class StepSize {
 
   @override
   int get hashCode => delta.hashCode;
+
+  @override
+  String toString() {
+    return 'StepSize($delta)';
+  }
 }
