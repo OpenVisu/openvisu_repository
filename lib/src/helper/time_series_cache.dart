@@ -115,4 +115,78 @@ class TimeSeriesCache {
       }
     }
   }
+
+  /// test if the timestap is contained in the cache
+  bool containsTime(final StepSize stepSize, final DateTime dateTime) {
+    if (!cache.containsKey(stepSize)) {
+      return false;
+    }
+    if (cache[stepSize]!.isEmpty) {
+      return false;
+    }
+    final list = cache[stepSize]![cache[stepSize]!.keys.first]!;
+    if (list.isEmpty) {
+      return false;
+    }
+    if (dateTime.isBefore(list.first.time)) {
+      return false;
+    }
+    if (dateTime.isAfter(list.last.time)) {
+      return false;
+    }
+    return true;
+  }
+
+  /// test if between the two timestamps is a gap that was never loaded
+  bool hasGap(
+    final StepSize stepSize,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    final list = cache[stepSize]![cache[stepSize]!.keys.first]!;
+    final int expect =
+        stop.difference(start).inMilliseconds ~/ stepSize.delta.inMilliseconds +
+            1;
+    final int found = list
+        .where((e) => !(e.time.isBefore(start) || e.time.isAfter(stop)))
+        .length;
+
+    return expect != found;
+  }
+
+  GapStartStop getGapStartStop(
+    final StepSize stepSize,
+    final DateTime start,
+    final DateTime stop,
+  ) {
+    final list = cache[stepSize]![cache[stepSize]!.keys.first]!;
+    var t = start;
+    for (TimeSeriesEntry tse in list) {
+      if (tse.time.isAtSameMomentAs(t)) {
+        t = t.add(stepSize.delta);
+        continue;
+      }
+      if (!tse.time.isBefore(stop)) {
+        throw ArgumentError('no gap found');
+      }
+      if (tse.time.isAfter(t)) {
+        return GapStartStop(
+          t.subtract(stepSize.delta),
+          tse.time.subtract(stepSize.delta),
+        );
+      }
+    }
+    throw ArgumentError('no gap found');
+  }
+
+  void clear() {
+    cache.clear();
+  }
+}
+
+class GapStartStop {
+  final DateTime start;
+  final DateTime stop;
+
+  GapStartStop(this.start, this.stop);
 }
