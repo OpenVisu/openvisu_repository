@@ -18,9 +18,10 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
-import 'package:openvisu_repository/src/helper/step_size.dart';
 
 class TimeSeriesLoader {
+  final TimeSeriesCache cache = TimeSeriesCache();
+
   // map of active futures
   // the key contains the parameters of the query
   @visibleForTesting
@@ -32,9 +33,15 @@ class TimeSeriesLoader {
   Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> load(
     final Pk<ChartPage> chartPageId,
     final List<Pk<TimeSerial>> timeSerialIds,
-    final DateTime start,
-    final DateTime stop,
+    DateTime start,
+    DateTime stop,
   ) {
+    final StepSize stepSize = StepSize.fromStartStop(start, stop);
+
+    OptimizedStartStop oss = optimizeStartStop(start, stop);
+    start = oss.start;
+    stop = oss.stop;
+
     Iterable<Query> queries =
         futures.keys.where(_covers(chartPageId, start, stop));
     if (queries.isNotEmpty) {
@@ -52,7 +59,7 @@ class TimeSeriesLoader {
     }
 
     futures[query] = doLoad(chartPageId, timeSerialIds, start, stop) //
-        .then(_cleanUp(query));
+        .then(_cleanUp(query, stepSize));
 
     return futures[query]!;
   }
@@ -62,11 +69,68 @@ class TimeSeriesLoader {
     Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>,
   ) _cleanUp(
     final Query query,
+    final StepSize stepSize,
   ) {
     return (Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> value) {
+      cache.setMultiple(value, stepSize);
       futures.remove(query);
       return value;
     };
+  }
+
+  @visibleForTesting
+  OptimizedStartStop optimizeStartStop(
+    DateTime start,
+    DateTime stop,
+  ) {
+    // align start stop with stepSize
+    final StepSize stepSize = StepSize.fromStartStop(start, stop);
+    start = DateTime.fromMillisecondsSinceEpoch(
+      (start.millisecondsSinceEpoch ~/ stepSize.delta.inMilliseconds) *
+          stepSize.delta.inMilliseconds,
+    );
+    stop = DateTime.fromMillisecondsSinceEpoch(
+      (stop.millisecondsSinceEpoch ~/ stepSize.delta.inMilliseconds) *
+          stepSize.delta.inMilliseconds,
+    );
+
+    // if nothing in cache, return
+    if (!cache.cache.containsKey(stepSize)) {
+      return OptimizedStartStop(start, stop);
+    }
+    if (cache.cache[stepSize]!.isEmpty) {
+      return OptimizedStartStop(start, stop);
+    }
+    final List<TimeSeriesEntry<double?>> list =
+        cache.cache[stepSize]![cache.cache[stepSize]!.keys.first]!;
+    if (list.isEmpty) {
+      return OptimizedStartStop(start, stop);
+    }
+
+    // TODO double width
+
+    // test for overlaps
+    final Duration delta = stop.difference(start);
+    final bool containsStop = cache.containsTime(stepSize, stop);
+    final bool containsStart = cache.containsTime(stepSize, start);
+    if (containsStart && containsStop) {
+      if (cache.hasGap(stepSize, start, stop)) {
+        final GapStartStop gss = cache.getGapStartStop(stepSize, start, stop);
+        return OptimizedStartStop(gss.start, gss.stop);
+      }
+      throw ArgumentError('query is covered by cache');
+    }
+    if (containsStop) {
+      stop = list.first.time.subtract(
+        stepSize.delta,
+      ); // stop time is not included in query result
+      start = stop.subtract(delta);
+    }
+    if (containsStart) {
+      start = list.last.time; // start time is not included in query result
+      stop = start.add(delta);
+    }
+    return OptimizedStartStop(start, stop);
   }
 
   // returns a function that returns true, if an exising query covers
@@ -125,4 +189,12 @@ class Query extends Equatable {
 
   @override
   List<Object?> get props => [chartPageId, start, stop, stepSize];
+}
+
+@visibleForTesting
+class OptimizedStartStop {
+  final DateTime start;
+  final DateTime stop;
+
+  OptimizedStartStop(this.start, this.stop);
 }
