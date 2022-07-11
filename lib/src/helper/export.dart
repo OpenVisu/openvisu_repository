@@ -15,3 +15,4 @@
 
 export 'time_series_cache.dart';
 export 'time_series_loader.dart';
+export 'step_size.dart';
