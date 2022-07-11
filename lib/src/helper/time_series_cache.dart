@@ -14,7 +14,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:openvisu_repository/openvisu_repository.dart';
-import 'package:openvisu_repository/src/helper/step_size.dart';
 
 class TimeSeriesCache {
   Map<StepSize, Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> cache = {};
@@ -22,13 +21,8 @@ class TimeSeriesCache {
   void set(
     final Pk<TimeSerial> timeSerialId,
     final List<TimeSeriesEntry<double?>> measurements,
+    final StepSize stepSize,
   ) {
-    if (measurements.length < 2) {
-      throw const FormatException('measurement list is to short');
-    }
-    final StepSize stepSize = StepSize.fromDelta(
-        measurements[1].time.difference(measurements[0].time));
-
     if (!cache.containsKey(stepSize)) {
       cache[stepSize] = {};
     }
@@ -37,6 +31,15 @@ class TimeSeriesCache {
     }
     cache[stepSize]![timeSerialId]!.addAll(measurements);
     cache[stepSize]![timeSerialId]!.sort((a, b) => a.time.compareTo(b.time));
+  }
+
+  setMultiple(
+    final Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> measurements,
+    final StepSize stepSize,
+  ) {
+    measurements.forEach((timeSerialId, values) {
+      set(timeSerialId, values, stepSize);
+    });
   }
 
   /// returns true if the data exists in the correct resolution for
