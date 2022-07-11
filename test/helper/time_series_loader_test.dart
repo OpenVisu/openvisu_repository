@@ -196,7 +196,11 @@ void main() {
       stepSize = StepSize.fromStartStop(start, stop);
 
       var oss = timeSeriesLoader.optimizeStartStop(start, stop);
-      expect(oss.start, data.first.time.subtract(const Duration(minutes: 52)));
+      expect(
+        oss.start,
+        data.first.time
+            .subtract(stepSize.recomendedQueryWidth() + stepSize.delta),
+      );
       expect(oss.stop, data.first.time.subtract(stepSize.delta));
     });
 
@@ -223,7 +227,7 @@ void main() {
 
       var oss = timeSeriesLoader.optimizeStartStop(start, stop);
       expect(oss.start, data.last.time);
-      expect(oss.stop, data.last.time.add(const Duration(minutes: 54)));
+      expect(oss.stop, data.last.time.add(stepSize.recomendedQueryWidth()));
     });
 
     test('test optimizeStartStop() fill gap', () {
