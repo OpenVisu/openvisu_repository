@@ -57,6 +57,6 @@ class TimeSeriesEntry<T> extends Equatable {
   @override
   List<Object> get props => [
         time,
-        if (value != null) value!,
+        value ?? 'null',
       ];
 }
