@@ -15,7 +15,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
-import 'package:openvisu_repository/src/helper/time_series_loader.dart';
 
 class MockTimeSeriesLoader extends TimeSeriesLoader {
   @override
@@ -32,16 +31,42 @@ class MockTimeSeriesLoader extends TimeSeriesLoader {
 void main() {
   group('TimeSeriesLoader', () {
     final Pk<ChartPage> chartPageId = Pk<ChartPage>(1);
-    final List<Pk<TimeSerial>> timeSerialIds = [Pk<TimeSerial>(1)];
+    final Pk<TimeSerial> timeSerialId1 = Pk<TimeSerial>(1);
+    late final List<Pk<TimeSerial>> timeSerialIds = [timeSerialId1];
 
     late final TimeSeriesLoader timeSeriesLoader = MockTimeSeriesLoader();
 
-    late final DateTime now;
-    late final DateTime before20minutes;
+    late DateTime now;
+    late DateTime before20minutes;
+
+    void _fillFromTo(
+      final Pk<TimeSerial> timeSerialId,
+      final DateTime start,
+      final DateTime stop,
+      final StepSize stepSize,
+    ) {
+      var t = start;
+      while (!t.isAfter(stop)) {
+        timeSeriesLoader.cache.set(
+          timeSerialId,
+          [
+            TimeSeriesEntry.fromDataType(
+                    DataType.Double, t, t.millisecondsSinceEpoch)
+                as TimeSeriesEntry<double?>
+          ],
+          stepSize,
+        );
+        t = t.add(stepSize.delta);
+      }
+    }
 
     setUpAll(() {
       now = DateTime.now();
       before20minutes = now.subtract(const Duration(minutes: 20));
+
+      var oss = timeSeriesLoader.optimizeStartStop(before20minutes, now);
+      now = oss.stop;
+      before20minutes = oss.start;
     });
 
     test('test load() sync', () {
@@ -65,7 +90,7 @@ void main() {
           timeSeriesLoader.load(
         chartPageId,
         timeSerialIds,
-        now.subtract(const Duration(minutes: 15)),
+        now.subtract(const Duration(minutes: 16)),
         now,
       );
       expect(r1 == r3, true);
@@ -109,6 +134,111 @@ void main() {
         now,
       );
       expect(r1 == r2, false);
+    });
+
+    test('test optimizeStartStop() align times to stepSize', () {
+      timeSeriesLoader.cache.clear();
+
+      var start = DateTime(2022, 7, 7, 18, 00, 4);
+      var stop = DateTime(2022, 7, 7, 18, 10, 9);
+
+      var stepSize = StepSize.fromStartStop(start, stop);
+      expect(stepSize.delta, const Duration(seconds: 10));
+
+      var oss = timeSeriesLoader.optimizeStartStop(start, stop);
+      expect(oss.start, DateTime(2022, 7, 7, 18, 00));
+      expect(oss.stop, DateTime(2022, 7, 7, 18, 10));
+
+      start = DateTime(2022, 7, 7, 18, 03, 12);
+      stop = DateTime(2022, 7, 7, 19, 01, 59);
+
+      stepSize = StepSize.fromStartStop(start, stop);
+      expect(stepSize.delta, const Duration(minutes: 1));
+
+      oss = timeSeriesLoader.optimizeStartStop(start, stop);
+      expect(oss.start, DateTime(2022, 7, 7, 18, 03));
+      expect(oss.stop, DateTime(2022, 7, 7, 19, 01));
+    });
+
+    test('test optimizeStartStop() width', () {
+      // TODO
+    });
+
+    test('test optimizeStartStop() left overlap with cache', () {
+      var stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+      _fillFromTo(timeSerialId1, now.subtract(const Duration(minutes: 40)),
+          now.subtract(const Duration(minutes: 20)), stepSize);
+
+      var data = timeSeriesLoader.cache.get(
+        timeSerialId1,
+        now.subtract(const Duration(hours: 1)),
+        now,
+      );
+      expect(data.length, 21);
+      expect(data.first.time, now.subtract(const Duration(minutes: 40)));
+      expect(data.last.time, now.subtract(const Duration(minutes: 20)));
+
+      // query with overlap of one minute and 30 seconds on the left
+      var start = data.first.time.subtract(const Duration(minutes: 50));
+      var stop = data.first.time.add(const Duration(minutes: 1, seconds: 30));
+      stepSize = StepSize.fromStartStop(start, stop);
+
+      var oss = timeSeriesLoader.optimizeStartStop(start, stop);
+      expect(oss.start, data.first.time.subtract(const Duration(minutes: 52)));
+      expect(oss.stop, data.first.time.subtract(stepSize.delta));
+    });
+
+    test('test optimizeStartStop() right overlap with cache', () {
+      var stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+      _fillFromTo(timeSerialId1, now.subtract(const Duration(minutes: 40)),
+          now.subtract(const Duration(minutes: 20)), stepSize);
+
+      var data = timeSeriesLoader.cache.get(
+        timeSerialId1,
+        now.subtract(const Duration(hours: 1)),
+        now,
+      );
+      expect(data.length, 21);
+      expect(data.first.time, now.subtract(const Duration(minutes: 40)));
+      expect(data.last.time, now.subtract(const Duration(minutes: 20)));
+
+      // query with overlap of one minute and 30 seconds on the right
+      var start = data.last.time.subtract(
+        const Duration(minutes: 1, seconds: 30),
+      );
+      var stop = data.last.time.add(const Duration(minutes: 52));
+
+      var oss = timeSeriesLoader.optimizeStartStop(start, stop);
+      expect(oss.start, data.last.time);
+      expect(oss.stop, data.last.time.add(const Duration(minutes: 54)));
+    });
+
+    test('test optimizeStartStop() fill gap', () {
+      timeSeriesLoader.cache.clear();
+
+      var stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+
+      _fillFromTo(timeSerialId1, now.subtract(const Duration(minutes: 40)),
+          now.subtract(const Duration(minutes: 20)), stepSize);
+      expect(
+        timeSeriesLoader.cache.hasGap(
+          stepSize,
+          now.subtract(const Duration(minutes: 40)),
+          now.subtract(const Duration(minutes: 20)),
+        ),
+        false,
+      );
+
+      _fillFromTo(timeSerialId1, now.subtract(const Duration(minutes: 10)), now,
+          stepSize);
+
+      var start = now.subtract(const Duration(minutes: 30));
+      var stop = now.subtract(const Duration(minutes: 5));
+
+      expect(timeSeriesLoader.cache.hasGap(stepSize, start, stop), true);
+      var oss = timeSeriesLoader.optimizeStartStop(start, stop);
+      expect(oss.start, now.subtract(const Duration(minutes: 20)));
+      expect(oss.stop, now.subtract(const Duration(minutes: 11)));
     });
   });
 }
