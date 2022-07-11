@@ -23,34 +23,98 @@ void main() {
 
     late final DateTime now;
     late final DateTime before20minutes;
+    late final DateTime before40minutes;
     late final List<TimeSeriesEntry<double?>> measurements20minutes;
+    late final List<TimeSeriesEntry<double?>> measurements20minutesDifferent;
+    final List<TimeSeriesEntry<double?>> measurements20inBetween = [];
 
     setUpAll(() {
       now = DateTime.now();
       before20minutes = now.subtract(const Duration(minutes: 20));
+      before40minutes = now.subtract(const Duration(minutes: 40));
 
       measurements20minutes = List.generate(
         21,
         (i) => TimeSeriesEntry.fromDataType(
           DataType.Double,
           now.subtract(Duration(minutes: 20 - i)),
-          i * 2,
+          now.subtract(Duration(minutes: 20 - i)).second,
         ) as TimeSeriesEntry<double?>,
       );
+      measurements20minutesDifferent = List.generate(
+        21,
+        (i) => TimeSeriesEntry.fromDataType(
+          DataType.Double,
+          now.subtract(Duration(minutes: 40 - i)),
+          now.subtract(Duration(minutes: 40 - i)).second,
+        ) as TimeSeriesEntry<double?>,
+      );
+
+      expect(
+        measurements20minutesDifferent.last,
+        measurements20minutes.first,
+      );
+      expect(measurements20minutesDifferent.first.time,
+          now.subtract(const Duration(minutes: 40)));
+      expect(measurements20minutesDifferent.last.time,
+          now.subtract(const Duration(minutes: 20)));
+      expect(measurements20minutes.first.time,
+          now.subtract(const Duration(minutes: 20)));
+      expect(measurements20minutes.last.time, now);
+
+      measurements20inBetween.addAll(
+        measurements20minutesDifferent.getRange(10, 21),
+      );
+      measurements20inBetween.addAll(
+        measurements20minutes.getRange(0, 10),
+      );
+      expect(measurements20inBetween.first, measurements20minutesDifferent[10]);
+      expect(measurements20inBetween.last, measurements20minutes[9]);
     });
 
     test('test set()', () {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
       expect(
         timeSeriesCache.exists(tiemSerialId1, before20minutes, now),
         false,
       );
 
-      timeSeriesCache.set(tiemSerialId1, measurements20minutes);
+      timeSeriesCache.set(tiemSerialId1, measurements20minutes, stepSize);
 
       expect(timeSeriesCache.exists(tiemSerialId1, before20minutes, now), true);
       expect(
         timeSeriesCache.existsMultiple([tiemSerialId1], before20minutes, now),
         true,
+      );
+    });
+
+    test('test set() dedublication', () {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+      expect(
+        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        21,
+      );
+
+      timeSeriesCache.set(tiemSerialId1, measurements20minutes, stepSize);
+
+      expect(
+        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        21,
+      );
+
+      timeSeriesCache.set(
+          tiemSerialId1, measurements20minutesDifferent, stepSize);
+
+      expect(
+        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        41,
+      );
+
+      timeSeriesCache.set(tiemSerialId1, measurements20inBetween, stepSize);
+
+      expect(
+        timeSeriesCache.get(tiemSerialId1, before40minutes, now).length,
+        41,
       );
     });
 
@@ -91,6 +155,8 @@ void main() {
     });
 
     test('test exists()', () {
+      final StepSize stepSize = StepSize.fromDelta(const Duration(minutes: 1));
+
       expect(
         timeSeriesCache.exists(
           tiemSerialId1,
@@ -100,14 +166,14 @@ void main() {
         false,
       );
 
-      timeSeriesCache.set(tiemSerialId1, measurements20minutes);
+      timeSeriesCache.set(tiemSerialId1, measurements20minutes, stepSize);
 
       expect(timeSeriesCache.exists(tiemSerialId1, before20minutes, now), true);
 
       expect(
         timeSeriesCache.exists(
           tiemSerialId1,
-          now.subtract(const Duration(minutes: 15)),
+          now.subtract(const Duration(minutes: 16)),
           now,
         ),
         true,
