@@ -23,6 +23,7 @@ class MockTimeSeriesLoader extends TimeSeriesLoader {
     final List<Pk<TimeSerial>> timeSerialIds,
     final DateTime start,
     final DateTime stop,
+    final StepSize stepSize,
   ) async {
     return {};
   }
