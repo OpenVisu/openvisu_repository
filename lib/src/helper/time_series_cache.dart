@@ -16,6 +16,7 @@
 import 'package:openvisu_repository/openvisu_repository.dart';
 
 class TimeSeriesCache {
+  static const int maxCacheItems = 1000;
   Map<StepSize, Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> cache = {};
 
   void set(
@@ -52,6 +53,31 @@ class TimeSeriesCache {
       }
     }
     cache[stepSize]![timeSerialId]!.sort((a, b) => a.time.compareTo(b.time));
+    _cleanUp(
+      timeSerialId,
+      stepSize,
+      measurements[measurements.length ~/ 2].time,
+    );
+  }
+
+  _cleanUp(
+    final Pk<TimeSerial> timeSerialId,
+    final StepSize stepSize,
+    final DateTime center,
+  ) {
+    if (cache[stepSize]![timeSerialId]!.length <= maxCacheItems) {
+      return;
+    }
+
+    final c =
+        cache[stepSize]![timeSerialId]!.indexWhere((e) => e.time == center);
+    final int t = cache[stepSize]![timeSerialId]!.length;
+    if (c + maxCacheItems ~/ 2 < t) {
+      cache[stepSize]![timeSerialId]!.removeRange(c + maxCacheItems ~/ 2, t);
+    }
+    if (c - maxCacheItems ~/ 2 > 0) {
+      cache[stepSize]![timeSerialId]!.removeRange(0, c - maxCacheItems ~/ 2);
+    }
   }
 
   setMultiple(
