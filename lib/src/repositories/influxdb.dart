@@ -23,6 +23,8 @@ import 'package:universal_html/html.dart' as html;
 class InfluxdbRepository {
   static final log = Logger('repository/InfluxdbRepository');
 
+  /// from is not included
+  /// to is included
   static Future<Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>>> get(
     final Pk<ChartPage> chartPageId,
     final DateTime? from,
