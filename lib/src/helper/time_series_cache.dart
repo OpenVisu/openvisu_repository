@@ -29,7 +29,28 @@ class TimeSeriesCache {
     if (!cache[stepSize]!.containsKey(timeSerialId)) {
       cache[stepSize]![timeSerialId] = [];
     }
-    cache[stepSize]![timeSerialId]!.addAll(measurements);
+    for (TimeSeriesEntry<double?> m in measurements) {
+      if (cache[stepSize]![timeSerialId]!
+          .where((e) => e.time == m.time)
+          .isEmpty) {
+        cache[stepSize]![timeSerialId]!.add(m);
+      }
+
+      if (cache[stepSize]![timeSerialId]!
+          .where((e) => e.time == m.time)
+          .isNotEmpty) {
+        final e =
+            cache[stepSize]![timeSerialId]!.firstWhere((e) => e.time == m.time);
+        if (e != m) {
+          if (m.value != null && e.value == null) {
+            // happens cause of the way "keep last" works in the influxdb
+            cache[stepSize]![timeSerialId]!.remove(e);
+            cache[stepSize]![timeSerialId]!.add(m);
+          } else {
+            throw AssertionError('no value should be added twice to the cache');
+        }
+      }
+    }
     cache[stepSize]![timeSerialId]!.sort((a, b) => a.time.compareTo(b.time));
   }
 
