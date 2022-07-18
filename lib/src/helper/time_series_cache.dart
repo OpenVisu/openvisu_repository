@@ -30,25 +30,23 @@ class TimeSeriesCache {
     if (!cache[stepSize]!.containsKey(timeSerialId)) {
       cache[stepSize]![timeSerialId] = [];
     }
-    for (TimeSeriesEntry<double?> m in measurements) {
+    for (TimeSeriesEntry<double?> newValue in measurements) {
       if (cache[stepSize]![timeSerialId]!
-          .where((e) => e.time == m.time)
+          .where((oldValue) => oldValue.time == newValue.time)
           .isEmpty) {
-        cache[stepSize]![timeSerialId]!.add(m);
+        cache[stepSize]![timeSerialId]!.add(newValue);
       }
 
       if (cache[stepSize]![timeSerialId]!
-          .where((e) => e.time == m.time)
+          .where((oldValue) => oldValue.time == newValue.time)
           .isNotEmpty) {
-        final e =
-            cache[stepSize]![timeSerialId]!.firstWhere((e) => e.time == m.time);
-        if (e != m) {
-          if (m.value != null && e.value == null) {
-            // happens cause of the way "keep last" works in the influxdb
-            cache[stepSize]![timeSerialId]!.remove(e);
-            cache[stepSize]![timeSerialId]!.add(m);
-          } else {
-          }
+        final oldValue = cache[stepSize]![timeSerialId]!
+            .firstWhere((e) => e.time == newValue.time);
+        if (newValue.value != null && oldValue.value == null) {
+          // happens cause of the way "keep last" works in the influxdb
+          cache[stepSize]![timeSerialId]!.remove(oldValue);
+          cache[stepSize]![timeSerialId]!.add(newValue);
+        } else {
         }
       }
     }
