@@ -33,7 +33,7 @@ class IframePage extends PageContent<IframePage> {
   );
 
   IframePage.fromJson(Map<String, dynamic> data)
-      : src = data['src'],
+      : src = data['src'] ?? '',
         super.fromJson(data);
 
   IframePage.createDefault()
