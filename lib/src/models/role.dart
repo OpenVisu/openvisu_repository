@@ -65,7 +65,15 @@ class Role extends Model<Role> {
                 .map((e) => Permission.fromJson(e))
                 .toList()
             : [],
-        super.fromJson(data);
+        super(
+          !data.containsKey('name')
+              ? const Pk<Role>.newModel()
+              : Pk<Role>.fromJson(data['name']),
+          Pk<User>.fromJson(data['created_by']),
+          Pk<User>.fromJson(data['updated_by']),
+          data['created_at'] ?? 0,
+          data['updated_at'] ?? 0,
+        );
 
   @override
   Map<String, dynamic> toMap() => {
@@ -80,7 +88,7 @@ class Role extends Model<Role> {
     final String? name, // NOTE name is only considered if new
   }) =>
       Role(
-        isNew ? const Pk<Role>.newModel() : Pk<Role>(1),
+        isNew ? const Pk<Role>.newModel() : Pk<Role>(isNew ? name : this.name),
         createdBy,
         updatedBy,
         createdAt,
