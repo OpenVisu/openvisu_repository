@@ -226,7 +226,7 @@ class AuthenticationRepository {
     }
 
     for (final Permission permission in permissions) {
-      if (permission.can(subject, action, ownerId == (me!.id as Pk<User>))) {
+      if (permission.can(subject, action, ownerId == me!.id.cast<User>())) {
         return true;
       }
     }
