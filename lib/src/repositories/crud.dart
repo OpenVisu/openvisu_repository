@@ -85,10 +85,7 @@ abstract class CrudRepository<T extends Model<T>> extends BaseRepository
   }
 
   String addFilterToUrl(String url, {List<Filter> filter = const []}) {
-    for (var element in filter) {
-      url += '&filter[${element.key}]=${element.value}';
-    }
-    return url;
+    return url += filter.map((e) => e.toUrl()).join('&');
   }
 
   String addPaginationToUrl(

@@ -78,5 +78,29 @@ void main() {
           ]);
       expect(list.length, 4);
     });
+
+    test('test paginated() with display_name filter', () async {
+      List<Node> list =
+          await repository.paginated(pageCount: 0, pageSize: 10, filter: [
+        const Filter(
+          key: 'display_name',
+          operator: FilterType.LIKE,
+          value: 'varint32',
+        )
+      ]);
+      expect(list.length, 1);
+    });
+
+    test('test paginated() with identifier filter', () async {
+      List<Node> list =
+          await repository.paginated(pageCount: 0, pageSize: 10, filter: [
+        const Filter(
+          key: 'identifier',
+          operator: FilterType.LIKE,
+          value: 'ns=2;i=17',
+        )
+      ]);
+      expect(list.length, 1);
+    });
   });
 }
