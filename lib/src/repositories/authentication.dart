@@ -166,6 +166,8 @@ class AuthenticationRepository {
         if (token!.isValid()) {
           me = Me.fromJson(await storage.getItem('me'));
           // TODO load me from url iff not set
+        } else {
+          await doLogout();
         }
       } else {
         await doLogout();
