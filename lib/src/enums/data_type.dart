@@ -265,6 +265,5 @@ enum DataType {
       case DataType.XmlElement:
         throw dc.FormatException('Unsupported DataType: $name');
     }
-    return null;
   }
 }

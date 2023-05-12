@@ -16,7 +16,6 @@
 export 'authentication.dart';
 export 'credentials.dart';
 export 'chart_page.dart';
-export 'credentials.dart';
 export 'dashboard.dart';
 export 'i_frame.dart';
 export 'iframe_page.dart';
@@ -35,6 +34,5 @@ export 'text_page.dart';
 export 'time_serial.dart';
 export 'user.dart';
 export 'crud.dart';
-export 'project.dart';
 export 'time_series_entry.dart';
 export 'measurements.dart';

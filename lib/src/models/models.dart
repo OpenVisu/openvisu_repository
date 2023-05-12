@@ -15,7 +15,6 @@
 
 export 'credentials.dart';
 export 'chart_page.dart';
-export 'credentials.dart';
 export 'dashboard.dart';
 export 'i_frame.dart';
 export 'iframe_page.dart';
